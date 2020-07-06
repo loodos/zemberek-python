@@ -1,0 +1,1 @@
+from .turkish_morphology import TurkishMorphology

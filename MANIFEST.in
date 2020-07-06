@@ -1,0 +1,5 @@
+include zemberek/resources/*.txt
+include zemberek/resources/normalization/*.txt
+include zemberek/resources/phonetics/*.txt
+include zemberek/resources/*.csv
+include zemberek/resources/*.slm
