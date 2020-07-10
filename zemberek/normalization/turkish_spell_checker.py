@@ -73,9 +73,9 @@ class TurkishSpellChecker:
 
             score: float
             if lm.order == 2:
-                score = lm.get_probability([left_index, word_index]) + lm.get_probability([word_index, right_index])
+                score = lm.get_probability((left_index, word_index)) + lm.get_probability((word_index, right_index))
             else:
-                score = lm.get_probability([left_index, word_index, right_index])
+                score = lm.get_probability((left_index, word_index, right_index))
             results.append((string, score))
 
         results.sort(key=itemgetter(1), reverse=True)

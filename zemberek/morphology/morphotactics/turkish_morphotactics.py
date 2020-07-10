@@ -1671,7 +1671,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
                 else:
                     self.different_stem_items[item] = transitions
         except ValueError:
-            logger.info('Cannot generate stem transition for %s with reason: '.format(item.id_))
+            logger.debug('Cannot generate stem transition for %s with reason: '.format(item.id_))
         finally:
             self.lock.release_write()
 

@@ -194,7 +194,7 @@ class TurkishSentenceNormalizer:
                         indexes[j] = self.lm.vocabulary.index_of(hist[j].content)
 
                     indexes[-1] = self.lm.vocabulary.index_of(c.content)
-                    score = self.lm.get_probability(indexes)
+                    score = self.lm.get_probability(tuple(indexes))
 
                     new_hyp.score = h.score + score
                     next_.append(new_hyp)

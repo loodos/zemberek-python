@@ -1,6 +1,9 @@
 
 class TurkicLetter:
-
+    """
+    This is a Letter which contains Turkic language specific attributes, such as vowel type,
+    English equivalent characters.
+    """
     UNDEFINED = None
 
     def __init__(self, char_value: str = False, vowel: bool = False, frontal: bool = False, rounded: bool = False,

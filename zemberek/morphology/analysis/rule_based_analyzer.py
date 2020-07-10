@@ -115,7 +115,7 @@ class RuleBasedAnalyzer:
                             try:
                                 attributes.remove(PhoneticAttribute.CannotTerminate)
                             except KeyError:
-                                logger.info("There is no CannotTerminate element in the set")
+                                logger.debug("There is no CannotTerminate element in the set")
                             last_token = suffix_transition.get_last_template_token()
                             if last_token.type_ == SurfaceTransition.TemplateTokenType.LAST_VOICED:
                                 attributes.add(PhoneticAttribute.ExpectsConsonant)

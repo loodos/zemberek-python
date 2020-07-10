@@ -172,5 +172,5 @@ class RootLexicon:
         start = time.time()
         lexicon_path = resource_filename("zemberek", "resources/lexicon.csv")
         lexicon = DictionaryReader.load_from_resources(lexicon_path)
-        logger.info(f"Dictionary generated in {time.time() - start} seconds")
+        logger.debug(f"Dictionary generated in {time.time() - start} seconds")
         return lexicon

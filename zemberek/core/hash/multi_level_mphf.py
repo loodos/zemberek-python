@@ -1,18 +1,21 @@
 import numpy as np
 
-from typing import List, BinaryIO
+from typing import List, BinaryIO, Tuple
 from struct import unpack
 
 from .mphf import Mphf
 
 
 class MultiLevelMphf(Mphf):
+    """
+    Minimum Perfect Hash Function Implementation. Detailed explanation can be found in original zemberek file
+    """
 
     HASH_MULTIPLIER = 16777619
     INITIAL_HASH_SEED = 0x811C9DC5
     BIT_MASK_21 = (1 << 21) - 1
 
-    def __init__(self, hash_level_data: List['MultiLevelMphf.HashIndexes']):
+    def __init__(self, hash_level_data: Tuple['MultiLevelMphf.HashIndexes']):
         self.hash_level_data = hash_level_data
 
     @staticmethod
@@ -30,17 +33,17 @@ class MultiLevelMphf(Mphf):
                 failed_indexes[j], = unpack('>i', f.read(4))
 
             indexes.append(MultiLevelMphf.HashIndexes(key_count, bucket_amount, hash_seed_values, failed_indexes))
-        return MultiLevelMphf(indexes)
+        return MultiLevelMphf(tuple(indexes))
 
     @staticmethod
-    def hash_(data: List[int], seed: int) -> int:
+    def hash_(data: Tuple[int, ...], seed: int) -> int:
         d = seed if seed > 0 else MultiLevelMphf.INITIAL_HASH_SEED
         for a in data:
             d = (d ^ a) * MultiLevelMphf.HASH_MULTIPLIER
 
         return d & 0x7fffffff
 
-    def get_(self, key: List[int], initial_hash: int) -> int:
+    def get_(self, key: Tuple[int, ...], initial_hash: int) -> int:
         for i in range(len(self.hash_level_data)):
             seed = self.hash_level_data[i].get_seed(initial_hash)
             if seed != 0:

@@ -9,7 +9,7 @@ class FloatLookup:
     @staticmethod
     def get_lookup_from_double(file) -> 'FloatLookup':
         range_, = unpack('>i', file.read(4))
-        values = list(unpack('>{}d'.format(range_), file.read(range_ * 8)))
+        values = tuple(unpack('>{}d'.format(range_), file.read(range_ * 8)))
         return FloatLookup(values)
 
     def get(self, n: int) -> float:

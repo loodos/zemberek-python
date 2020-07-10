@@ -237,6 +237,13 @@ class TurkishAlphabet:
         return letters
 
     def get_last_letter(self, s: str) -> TurkicLetter:
+        """
+        Returns the last letter of the input as "TurkicLetter". If input is empty or the last character
+        does not belong to alphabet, returns TurkicLetter.UNDEFINED.
+
+        :param str s: input string
+        :return: last letter of input as TurkicLetter
+        """
         return TurkicLetter.UNDEFINED if len(s) == 0 else self.get_letter(s[len(s) - 1])
 
     def get_letter(self, c: str) -> TurkicLetter:
@@ -253,6 +260,13 @@ class TurkishAlphabet:
             return TurkicLetter.UNDEFINED
 
     def get_first_letter(self, s: str) -> TurkicLetter:
+        """
+        Returns the first letter of the input as "TurkicLetter". If input is empty or the first
+        character does not belong to alphabet, returns TurkicLetter.UNDEFINED.
+
+        :param str s: input string
+        :return: first letter of input as TurkicLetter
+        """
         if len(s) == 0:
             return TurkicLetter.UNDEFINED
         else:

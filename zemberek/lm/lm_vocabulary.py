@@ -39,14 +39,14 @@ class LmVocabulary:
     def size(self) -> int:
         return len(self.vocabulary)
 
-    def to_indexes(self, words: Tuple[str, str]) -> List[int]:
+    def to_indexes(self, words: Tuple[str, str]) -> Tuple[int, ...]:
         indexes: List[int] = []
         for word in words:
             if word not in self.vocabulary_index_map:
                 indexes.append(self.unknown_word_index)
             else:
                 indexes.append(self.vocabulary_index_map[word])
-        return indexes
+        return tuple(indexes)
 
     def generate_map(self, input_vocabulary: List[str]):
         index_counter = 0

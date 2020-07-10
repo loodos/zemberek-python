@@ -82,7 +82,7 @@ class MorphemeState:
     def add_outgoing(self, suffix_transitions: List[MorphemeTransition]) -> 'MorphemeState':
         for suffix_transition in suffix_transitions:
             if suffix_transition in self.outgoing:
-                logger.info(f"Outgoing transition already exists{str(suffix_transition)}")
+                logger.debug(f"Outgoing transition already exists{str(suffix_transition)}")
 
             self.outgoing.append(suffix_transition)
         return self
@@ -90,7 +90,7 @@ class MorphemeState:
     def add_incoming(self, suffix_transitions: List[MorphemeTransition]) -> 'MorphemeState':
         for suffix_transition in suffix_transitions:
             if suffix_transition in self.incoming:
-                logger.info(f"Incoming transition already exists{str(suffix_transition)}")
+                logger.debug(f"Incoming transition already exists{str(suffix_transition)}")
 
             self.incoming.append(suffix_transition)
         return self
