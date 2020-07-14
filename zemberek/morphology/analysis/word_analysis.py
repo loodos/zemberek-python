@@ -1,4 +1,4 @@
-from typing import List, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .single_analysis import SingleAnalysis
@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 class WordAnalysis:
     EMPTY_INPUT_RESULT: 'WordAnalysis' = None
 
-    def __init__(self, inp: str, analysis_results: List['SingleAnalysis'], normalized_input: str = None):
+    def __init__(self, inp: str, analysis_results: Tuple['SingleAnalysis'], normalized_input: str = None):
         self.inp = inp
         self.analysis_results = analysis_results
         self.normalized_input = self.inp if normalized_input is None else normalized_input

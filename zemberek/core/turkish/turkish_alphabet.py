@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Dict
 
 from ..text import TextUtil
 from .turkic_letter import TurkicLetter
@@ -16,7 +16,7 @@ class TurkishAlphabet:
                 A dictionary to map "i" to its correct capital
 
     """
-    INSTANCE: Union[None, 'TurkishAlphabet'] = None
+    INSTANCE: 'TurkishAlphabet'
     lower_map = {ord(u'I'): u'ı'}
     upper_map = {ord(u'i'): u'İ'}
 
@@ -26,14 +26,16 @@ class TurkishAlphabet:
         self.all_letters = self.lowercase + self.uppercase
         self.vowels_lowercase = "aeıioöuüâîû"
         self.vowels_uppercase = self.vowels_lowercase.translate(self.upper_map).upper()
+        self.vowels = set(self.vowels_lowercase + self.vowels_uppercase)
         self.circumflex = "âîû"
         self.circumflex_upper = "ÂÎÛ"
-        self.apostrophe = "′´`’‘'"
+        self.circumflexes = set(self.circumflex + self.circumflex_upper)
+        self.apostrophe = set("′´`’‘'")
         self.stop_consonants = "çkptÇKPT"
         self.voiceless_consonants = "çfhkpsştÇFHKPSŞT"
         self.turkish_specific = "çÇğĞıİöÖşŞüÜâîûÂÎÛ"
         self.turkish_ascii = "cCgGiIoOsSuUaiuAIU"
-        self.ascii_eq_tr = "cCgGiIoOsSuUçÇğĞıİöÖşŞüÜ"
+        self.ascii_eq_tr = set("cCgGiIoOsSuUçÇğĞıİöÖşŞüÜ")
         self.ascii_eq = "çÇğĞıİöÖşŞüÜcCgGiIoOsSuU"
         self.foreign_diacritics = "ÀÁÂÃÄÅÈÉÊËÌÍÎÏÑÒÓÔÕÙÚÛàáâãäåèéêëìíîïñòóôõùúû"
         self.diacritics_to_turkish = "AAAAAAEEEEIIIINOOOOUUUaaaaaaeeeeiiiinoooouuu"
@@ -67,12 +69,12 @@ class TurkishAlphabet:
         return False
 
     def to_ascii(self, inp: str) -> str:
-        sb = ""
+        sb = []
         for c in inp:
             res = self.turkish_to_ascii_map.get(c)
             map_ = c if res is None else res
-            sb += map_
-        return sb
+            sb.append(map_)
+        return ''.join(sb)
 
     def is_ascii_equal(self, c1: str, c2: str) -> bool:
         if c1 == c2:
@@ -123,13 +125,13 @@ class TurkishAlphabet:
         if not self.contains_apostrophe(s):
             return s
         else:
-            sb = ""
+            sb = []
             for c in s:
                 if c in self.apostrophe:
-                    sb += "\'"
+                    sb.append("\'")
                 else:
-                    sb += c
-            return sb
+                    sb.append(c)
+            return ''.join(sb)
 
     def contains_foreign_diacritics(self, s: str) -> bool:
         for c in s:
@@ -148,7 +150,7 @@ class TurkishAlphabet:
 
     def contains_circumflex(self, s: str) -> bool:
         for c in s:
-            if c in self.circumflex + self.circumflex_upper:
+            if c in self.circumflexes:
                 return True
         return False
 
@@ -160,27 +162,27 @@ class TurkishAlphabet:
             if not self.contains_circumflex(s):
                 return s
             else:
-                sb = ""
+                sb = []
                 for c in s:
-                    if c in self.circumflex + self.circumflex_upper:
-                        sb += self.circumflex_map.get(c)
+                    if c in self.circumflexes:
+                        sb.append(self.circumflex_map.get(c))
                     else:
-                        sb += c
+                        sb.append(c)
 
-                return sb
+                return ''.join(sb)
 
     def normalize(self, inp: str) -> str:
         inp = TextUtil.normalize_apostrophes(inp.translate(self.lower_map).lower())
-        sb = ""
+        sb = []
         for c in inp:
             if c in self.letter_map.keys() or c == '.' or c == '-':
-                sb += c
+                sb.append(c)
             else:
-                sb += "?"
-        return sb
+                sb.append("?")
+        return ''.join(sb)
 
     def is_vowel(self, c: str) -> bool:
-        return c in (self.vowels_lowercase + self.vowels_uppercase)
+        return c in self.vowels
 
     def contains_vowel(self, s: str) -> bool:
         if len(s) == 0:
@@ -244,7 +246,7 @@ class TurkishAlphabet:
         :param str s: input string
         :return: last letter of input as TurkicLetter
         """
-        return TurkicLetter.UNDEFINED if len(s) == 0 else self.get_letter(s[len(s) - 1])
+        return TurkicLetter.UNDEFINED if len(s) == 0 else self.get_letter(s[-1])
 
     def get_letter(self, c: str) -> TurkicLetter:
         letter = self.letter_map.get(c)
@@ -267,14 +269,14 @@ class TurkishAlphabet:
         :param str s: input string
         :return: first letter of input as TurkicLetter
         """
-        if len(s) == 0:
+        if not s:
             return TurkicLetter.UNDEFINED
         else:
             return self.get_letter(s[0])
 
     @staticmethod
     def last_char(s: str) -> str:
-        return s[len(s) - 1]
+        return s[-1]
 
     def voice(self, c: str) -> str:
         res = self.voicing_map.get(c)

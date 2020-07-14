@@ -69,5 +69,5 @@ class SearchPath:
 
     def __str__(self):
         st = self.get_stem_transition()
-        morpheme_str = " + ".join([str(s) for s in self.transitions])
+        morpheme_str = " + ".join(str(s) for s in self.transitions)
         return "[(" + st.item.id_ + ")(-" + self.tail + ") " + morpheme_str + "]"

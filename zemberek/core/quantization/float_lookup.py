@@ -2,7 +2,7 @@ from struct import unpack
 
 
 class FloatLookup:
-    def __init__(self, data):  # data: List[float]
+    def __init__(self, data):  # data: Tuple[float]
         self.data = data
         self.range_ = len(data)
 

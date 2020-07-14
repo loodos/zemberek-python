@@ -45,16 +45,6 @@ class GramDataArray:
 
             self.data.append(np.fromfile(file, dtype=dt, count=read_count))
 
-    @staticmethod
-    def get_power_of_two(k: int, limit: int) -> int:
-        if k <= 2:
-            return 1
-        else:
-            i = 1
-            while i < k:
-                i = i * 2
-            return i / 2 if i >= limit else i
-
     def get_probability_rank(self, index: int) -> int:
         page_id = self.rshift(index, self.page_shift)
         page_index = (index & self.index_mask) * self.block_size + self.fp_size

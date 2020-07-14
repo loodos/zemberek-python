@@ -79,36 +79,6 @@ class DictionaryReader:
                               item_attrs, item_pron, item_index)
 
 
-class DictionaryItemIterator:
-    """
-    An iterator class to iterate over RootLexicon instance
-
-    Attributes
-    ----------
-    dict_items : List[DictionaryItem]
-        list of DictionaryItem (words) to iterate over
-    index : int
-        current item's position
-
-    """
-
-    def __init__(self, dict_items: List[DictionaryItem]):
-        self.dict_items = dict_items
-        self.index = 0
-
-    def __next__(self):
-        """
-        returns the next item from the list if exists
-        else raises StopIteration exception
-        :return: next item in the list
-        """
-        if self.index < len(self.dict_items):
-            _item = self.dict_items[self.index]
-            self.index += 1
-            return _item
-        raise StopIteration
-
-
 class RootLexicon:
     """
     An iterable class to represent the lexicon dictionary
@@ -120,7 +90,6 @@ class RootLexicon:
     """
 
     def __init__(self, item_list: List[DictionaryItem]):
-        # self.item_list = item_list
         self.id_map: Dict[str, DictionaryItem] = dict()
         self.item_set: Set[DictionaryItem] = set()
         self.item_map: Dict[str, List[DictionaryItem]] = dict()

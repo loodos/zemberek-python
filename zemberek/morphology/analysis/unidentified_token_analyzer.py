@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from enum import Enum
-from typing import List, Dict, TYPE_CHECKING
+from typing import List, Dict, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .rule_based_analyzer import RuleBasedAnalyzer
@@ -16,7 +16,6 @@ from .single_analysis import SingleAnalysis
 
 
 class UnidentifiedTokenAnalyzer:
-
     ALPHABET = TurkishAlphabet.INSTANCE
     non_letter_pattern = re.compile("[^" + ALPHABET.all_letters + "]")
     ordinal_map: Dict[str, str] = TurkishNumbers.ordinal_map
@@ -27,12 +26,12 @@ class UnidentifiedTokenAnalyzer:
         self.guesser = PronunciationGuesser()
         self.lexicon = analyzer.lexicon
 
-    def analyze(self, token: Token) -> List[SingleAnalysis]:
+    def analyze(self, token: Token) -> Tuple[SingleAnalysis, ...]:
         s_pos: SecondaryPos = self.guess_secondary_pos_type(token)
         word = token.content
         if s_pos == SecondaryPos.None_:
             if "?" in word:
-                return []
+                return ()
             else:
                 return self.try_numeral(token) if self.ALPHABET.contains_digit(word) else \
                     self.analyze_word(word, SecondaryPos.Abbreviation if "." in word else SecondaryPos.ProperNoun)
@@ -41,13 +40,14 @@ class UnidentifiedTokenAnalyzer:
         elif s_pos != SecondaryPos.Date and s_pos != SecondaryPos.Clock:
             normalized = re.sub(self.non_letter_pattern, "", word)
             item = DictionaryItem(word, word, PrimaryPos.Noun, s_pos, pronunciation=normalized)
-            if s_pos != SecondaryPos.HashTag and s_pos != SecondaryPos.Email and s_pos != SecondaryPos.Url and s_pos != SecondaryPos.Mention:
+            if s_pos != SecondaryPos.HashTag and s_pos != SecondaryPos.Email and s_pos != SecondaryPos.Url and \
+                    s_pos != SecondaryPos.Mention:
                 item_does_not_exist = item not in self.lexicon
                 if item_does_not_exist:
                     item.attributes.add(RootAttribute.Runtime)
                     self.analyzer.stem_transitions.add_dictionary_item(item)
 
-                results: List[SingleAnalysis] = self.analyzer.analyze(word)
+                results: Tuple[SingleAnalysis] = self.analyzer.analyze(word)
                 if item_does_not_exist:
                     self.analyzer.stem_transitions.remove_dictionary_item(item)
 
@@ -57,11 +57,11 @@ class UnidentifiedTokenAnalyzer:
         else:
             return self.try_numeral(token)
 
-    def get_for_roman_numeral(self, token: Token) -> List[SingleAnalysis]:
+    def get_for_roman_numeral(self, token: Token) -> Tuple[SingleAnalysis, ...]:
         content = token.content
         if "'" in content:
             i = content.find(chr(39))
-            se = StemAndEnding(content[0:i], content[i+1:])
+            se = StemAndEnding(content[0:i], content[i + 1:])
         else:
             se = StemAndEnding(content, "")
 
@@ -71,7 +71,7 @@ class UnidentifiedTokenAnalyzer:
 
         decimal = TurkishNumbers.roman_to_decimal(ss)
         if decimal == -1:
-            return []
+            return ()
         else:
             if se.stem.endswith("."):
                 lemma = self.numeral_ending_machine.find(str(decimal))
@@ -88,19 +88,21 @@ class UnidentifiedTokenAnalyzer:
             res = self.analyzer.analyze(to_parse)
             for re_ in res:
                 if re_.item.primary_pos == PrimaryPos.Numeral:
-                    run_time_item = DictionaryItem(se.stem, se.stem, PrimaryPos.Numeral, SecondaryPos.RomanNumeral, pronunciation=content + lemma)
+                    run_time_item = DictionaryItem(se.stem, se.stem, PrimaryPos.Numeral, SecondaryPos.RomanNumeral,
+                                                   pronunciation=content + lemma)
                     run_time_item.attributes.add(RootAttribute.Runtime)
                     results.append(re_.copy_for(run_time_item, se.stem))
-            return results
+            return tuple(results)
 
-    def analyze_word(self, word: str, secondary_pos: SecondaryPos) -> List[SingleAnalysis]:
+    def analyze_word(self, word: str, secondary_pos: SecondaryPos) -> Tuple[SingleAnalysis, ...]:
         if word.find(chr(39)) >= 0:
             return self.try_word_with_apostrophe(word, secondary_pos)
         else:
-            return self.try_without_apostrophe(word, secondary_pos) if secondary_pos != SecondaryPos.ProperNoun and \
-                                                                       secondary_pos != SecondaryPos.Abbreviation else []
+            return self.try_without_apostrophe(word,
+                                               secondary_pos) if secondary_pos != SecondaryPos.ProperNoun and \
+                                                                 secondary_pos != SecondaryPos.Abbreviation else []
 
-    def try_without_apostrophe(self, word: str, secondary_pos: SecondaryPos) -> List[SingleAnalysis]:
+    def try_without_apostrophe(self, word: str, secondary_pos: SecondaryPos) -> Tuple[SingleAnalysis]:
         normalized = None
         if self.ALPHABET.contains_foreign_diacritics(word):
             normalized = self.ALPHABET.foreign_diacritics_to_turkish(word)
@@ -111,7 +113,7 @@ class UnidentifiedTokenAnalyzer:
         item = DictionaryItem(Turkish.capitalize(normalized) if capitalize else normalized, normalized, PrimaryPos.Noun,
                               secondary_pos, pronunciation=pronunciation)
         if self.ALPHABET.contains_vowel(pronunciation):
-            result: List[SingleAnalysis] = [SingleAnalysis.dummy(word, item)]
+            result = (SingleAnalysis.dummy(word, item),)
             return result
         else:
             item_does_not_exist: bool = item not in self.lexicon
@@ -119,13 +121,13 @@ class UnidentifiedTokenAnalyzer:
                 item.attributes.add(RootAttribute.Runtime)
                 self.analyzer.stem_transitions.add_dictionary_item(item)
 
-            results: List[SingleAnalysis] = self.analyzer.analyze(normalized)
+            results: Tuple[SingleAnalysis] = self.analyzer.analyze(normalized)
             if item_does_not_exist:
                 self.analyzer.stem_transitions.remove_dictionary_item(item)
 
             return results
 
-    def try_word_with_apostrophe(self, word: str, secondary_pos: SecondaryPos) -> List[SingleAnalysis]:
+    def try_word_with_apostrophe(self, word: str, secondary_pos: SecondaryPos) -> Tuple[SingleAnalysis, ...]:
         normalized = self.ALPHABET.normalize_apostrophe(word)
 
         index = normalized.find(chr(39))
@@ -142,7 +144,7 @@ class UnidentifiedTokenAnalyzer:
                 Turkish.capitalize(normalized) if capitalize else stem if pronunciation_possible else word,
                 stem_normalized, PrimaryPos.Noun, secondary_pos, pronunciation=pronunciation)
             if not pronunciation_possible:
-                result: List[SingleAnalysis] = [SingleAnalysis.dummy(word, item)]
+                result = (SingleAnalysis.dummy(word, item),)
                 return result
             else:
                 item_does_not_exist: bool = item not in self.lexicon
@@ -151,20 +153,20 @@ class UnidentifiedTokenAnalyzer:
                     self.analyzer.stem_transitions.add_dictionary_item(item)
 
                 to_parse = stem_normalized + ending_normalized
-                no_quotes_parses: List[SingleAnalysis] = self.analyzer.analyze(to_parse)
+                no_quotes_parses: Tuple[SingleAnalysis] = self.analyzer.analyze(to_parse)
                 if item_does_not_exist:
                     self.analyzer.stem_transitions.remove_dictionary_item(item)
 
-                analyses: List[SingleAnalysis] = [no_quotes_parse for no_quotes_parse in no_quotes_parses if
-                                                  no_quotes_parse.get_stem() == stem_normalized]
+                analyses: Tuple[SingleAnalysis] = tuple(no_quotes_parse for no_quotes_parse in no_quotes_parses if
+                                                        no_quotes_parse.get_stem() == stem_normalized)
                 return analyses
         else:
-            return []
+            return ()
 
     def guess_pronunciation(self, stem: str) -> str:
         return self.guesser.to_turkish_letter_pronunciations(stem) if not self.ALPHABET.contains_vowel(stem) else stem
 
-    def try_numeral(self, token: Token) -> List[SingleAnalysis]:
+    def try_numeral(self, token: Token) -> Tuple[SingleAnalysis]:
         s = token.content
         s = s.translate(self.ALPHABET.lower_map).lower()
         se: StemAndEnding = self.get_from_numeral(s)
@@ -186,7 +188,7 @@ class UnidentifiedTokenAnalyzer:
                 else:
                     to_parse = lemma + se.ending
 
-                res: List[SingleAnalysis] = self.analyzer.analyze(to_parse)
+                res: Tuple[SingleAnalysis] = self.analyzer.analyze(to_parse)
                 for re_ in res:
                     if re_.item.primary_pos == PrimaryPos.Numeral:
                         run_time_item = DictionaryItem(se.stem, se.stem, pronunciation=s + lemma,
@@ -195,13 +197,13 @@ class UnidentifiedTokenAnalyzer:
                         run_time_item.attributes.add(RootAttribute.Runtime)
                         results.append(re_.copy_for(run_time_item, se.stem))
 
-        return results
+        return tuple(results)
 
     @staticmethod
     def get_from_numeral(s: str) -> StemAndEnding:
         if "'" in s:
             j = s.find("'")
-            return StemAndEnding(s[0:j], s[j+1:])
+            return StemAndEnding(s[0:j], s[j + 1:])
         else:
             j = 0
             for cut_point in range(len(s) - 1, -1, -1):

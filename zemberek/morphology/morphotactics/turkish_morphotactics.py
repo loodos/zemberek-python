@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from typing import Dict, Set, List, Union, TYPE_CHECKING
+from typing import Dict, Set, List, Tuple, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..lexicon import RootLexicon
@@ -1629,13 +1629,6 @@ class StemTransitionsBase:
         else:
             raise Exception("Lexicon Item with special stem change cannot be handled:" + item.id_)
 
-    @staticmethod
-    def java_string_hashcode(s: str):
-        h = 0
-        for c in s:
-            h = (31 * h + ord(c)) & 0xFFFFFFFF
-        return ((h + 0x80000000) & 0xFFFFFFFF) - 0x80000000
-
 
 # This class was under morphology/analysis/ but it has a circular import dependency
 # with TurkishMorphotactics class and due to the restrictions of Python on circular imports
@@ -1718,7 +1711,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
         else:
             self.single_stems[surface_form] = stem_transition
 
-    def get_transitions(self, stem: str = None) -> Union[Set[StemTransition], List[StemTransition]]:
+    def get_transitions(self, stem: str = None) -> Union[Set[StemTransition], Tuple[StemTransition, ...]]:
         if not stem:
             result = set(self.single_stems.values())
             for value in self.multi_stems.values():
@@ -1728,25 +1721,24 @@ class StemTransitionsMapBased(StemTransitionsBase):
             self.lock.acquire_read()
             try:
                 if stem in self.single_stems.keys():
-                    return [self.single_stems[stem]]
+                    return (self.single_stems[stem],)
 
                 if stem in self.multi_stems.keys():
-                    return self.multi_stems[stem]
+                    return tuple(self.multi_stems[stem])
 
-                empty_list = []
             finally:
                 self.lock.release_read()
 
-            return empty_list
+            return ()
 
-    def get_transitions_for_item(self, item: DictionaryItem) -> List[StemTransition]:
+    def get_transitions_for_item(self, item: DictionaryItem) -> Tuple[StemTransition]:
         self.lock.acquire_read()
         try:
             if item in self.different_stem_items.keys():
-                return self.different_stem_items[item]
+                return tuple(self.different_stem_items[item])
             else:
-                transitions: List[StemTransition] = self.get_transitions(item.root)
-                return [s for s in transitions if s.item == item] if len(transitions) > 0 else []
+                transitions: Tuple[StemTransition] = self.get_transitions(item.root)
+                return tuple(s for s in transitions if s.item == item) if len(transitions) > 0 else ()
         finally:
             self.lock.release_read()
 
@@ -1769,7 +1761,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
         finally:
             self.lock.release_read()
 
-    def get_prefix_matches(self, inp: str, ascii_tolerant: bool) -> List[StemTransition]:
+    def get_prefix_matches(self, inp: str, ascii_tolerant: bool) -> Tuple[StemTransition]:
         if self.ascii_keys is None and ascii_tolerant:
             self.generate_ascii_tolerant_map()
 
@@ -1785,7 +1777,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
                 else:
                     matches.extend(self.get_transitions(stem=stem))
 
-            return matches
+            return tuple(matches)
         finally:
             self.lock.release_read()
 

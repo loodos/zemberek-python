@@ -84,7 +84,7 @@ class SmoothLM:
             vocabulary_size = self.vocabulary.size()
             if vocabulary_size > unigram_count:
                 self.ngram_data[1].count = vocabulary_size
-                self.unigram_probs = self.unigram_probs[:vocabulary_size] if len(self.unigram_probs) >= vocabulary_size \
+                self.unigram_probs = self.unigram_probs[:vocabulary_size] if len(self.unigram_probs) >= vocabulary_size\
                     else np.pad(self.unigram_probs, (0, vocabulary_size - len(self.unigram_probs)))
                 self.unigram_backoffs = self.unigram_backoffs[:vocabulary_size] \
                     if len(self.unigram_backoffs) >= vocabulary_size \

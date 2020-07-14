@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING
+from typing import List, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..morphotactics import TurkishMorphotactics
@@ -22,38 +22,38 @@ class WordGenerator:
         self.morphotactics = morphotactics
         self.stem_transitions = morphotactics.stem_transitions
 
-    def generate(self, inp: str = None, item: DictionaryItem = None, morphemes: List[Morpheme] = None,
-                 candidates: List[StemTransition] = None) -> List['WordGenerator.Result']:
+    def generate(self, item: DictionaryItem = None, morphemes: Tuple[Morpheme, ...] = None,
+                 candidates: Tuple[StemTransition, ...] = None) -> Tuple['WordGenerator.Result', ...]:
         if item:
-            candidates_st: List[StemTransition] = self.stem_transitions.get_transitions_for_item(item)
-            return self.generate(inp=item.id_, candidates=candidates_st, morphemes=morphemes)
-        # no item means generate(String input, List<StemTransition> candidates, List<Morpheme> morphemes) is called
+            candidates_st: Tuple[StemTransition, ...] = self.stem_transitions.get_transitions_for_item(item)
+            return self.generate(candidates=candidates_st, morphemes=morphemes)
+        # no item means generate(List<StemTransition> candidates, List<Morpheme> morphemes) is called
         paths: List['WordGenerator.GenerationPath'] = []
 
         for candidate in candidates:
             search_path: SearchPath = SearchPath.initial_path(candidate, " ")
-            morphemes_in_path: List[Morpheme]
+            # morphemes_in_path: Tuple[Morpheme]
             if len(morphemes) > 0:
                 if morphemes[0] == search_path.current_state.morpheme:
                     morphemes_in_path = morphemes[1:]
                 else:
                     morphemes_in_path = morphemes
             else:
-                morphemes_in_path = []
+                morphemes_in_path = ()
 
             paths.append(WordGenerator.GenerationPath(search_path, morphemes_in_path))
 
         # search graph
-        result_paths: List['WordGenerator.GenerationPath'] = self.search(paths)
+        result_paths: Tuple['WordGenerator.GenerationPath'] = self.search(paths)
         result: List['WordGenerator.Result'] = []
 
         for path in result_paths:
             analysis = SingleAnalysis.from_search_path(path.path)
             result.append(WordGenerator.Result(analysis.surface_form(), analysis))
 
-        return result
+        return tuple(result)
 
-    def search(self, current_paths: List['WordGenerator.GenerationPath']) -> List['WordGenerator.GenerationPath']:
+    def search(self, current_paths: List['WordGenerator.GenerationPath']) -> Tuple['WordGenerator.GenerationPath', ...]:
         result: List['WordGenerator.GenerationPath'] = []
 
         while len(current_paths) > 0:
@@ -69,7 +69,7 @@ class WordGenerator:
                 all_new_paths.extend(new_paths)
             current_paths = all_new_paths
 
-        return result
+        return tuple(result)
 
     @staticmethod
     def advance(g_path: 'WordGenerator.GenerationPath') -> List['WordGenerator.GenerationPath']:
@@ -119,7 +119,7 @@ class WordGenerator:
             return self.surface + "-" + str(self.analysis)
 
     class GenerationPath:
-        def __init__(self, path: SearchPath, morphemes: List[Morpheme]):
+        def __init__(self, path: SearchPath, morphemes: Tuple[Morpheme]):
             self.path = path
             self.morphemes = morphemes
 

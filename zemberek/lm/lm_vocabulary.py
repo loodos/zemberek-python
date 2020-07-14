@@ -16,10 +16,10 @@ class LmVocabulary:
     def __init__(self, f: BinaryIO):
         vocabulary_length, = unpack(">i", f.read(4))
 
-        vocabulary: List[str] = []
+        vocab: List[str] = []
         for i in range(vocabulary_length):
             utf_length, = unpack(">H", f.read(2))
-            vocabulary.append(f.read(utf_length).decode("utf-8"))
+            vocab.append(f.read(utf_length).decode("utf-8"))
 
         self.vocabulary_index_map: Dict[str, int] = {}
         self.unknown_word = None
@@ -30,7 +30,7 @@ class LmVocabulary:
         self.sentence_end = None
         self.vocabulary = ()
 
-        self.generate_map(vocabulary)
+        self.generate_map(vocab)
 
     def index_of(self, word: str) -> int:
         k = self.vocabulary_index_map.get(word)
