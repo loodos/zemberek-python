@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Tuple
 from antlr4.InputStream import InputStream
 from antlr4.error.ErrorListener import ConsoleErrorListener
 from antlr4.Token import Token as Token_
@@ -15,10 +15,10 @@ class TurkishTokenizer:
     def __init__(self, accepted_type_bits: int):
         self.accepted_type_bits = accepted_type_bits
 
-    def tokenize(self, word: str) -> List[Token]:
+    def tokenize(self, word: str) -> Tuple[Token, ...]:
         return self.get_all_tokens(self.lexer_instance(InputStream(word)))
 
-    def get_all_tokens(self, lexer: TurkishLexer) -> List[Token]:
+    def get_all_tokens(self, lexer: TurkishLexer) -> Tuple[Token, ...]:
         tokens = []
 
         token: Token_ = lexer.nextToken()
@@ -27,7 +27,7 @@ class TurkishTokenizer:
             if not self.type_ignored(type_):
                 tokens.append(self.convert(token))
             token = lexer.nextToken()
-        return tokens
+        return tuple(tokens)
 
     @staticmethod
     def convert(token: Token_) -> Token:

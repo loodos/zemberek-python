@@ -425,7 +425,6 @@ class Conditions(ABC):
 
             return False
 
-
         def __str__(self):
             return "PreviousGroupContains{" + str(self.states) + "}"
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import deepcopy
 from typing import List, Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -64,7 +65,7 @@ class SearchPath:
         morphemes: List[SurfaceTransition] = []
         root = SurfaceTransition(stem_transition.surface, stem_transition)
         morphemes.append(root)
-        return SearchPath(tail, stem_transition.to, morphemes, stem_transition.phonetic_attributes.copy(),
+        return SearchPath(tail, stem_transition.to, morphemes, deepcopy(stem_transition.phonetic_attributes),
                           stem_transition.to.terminal_)
 
     def __str__(self):

@@ -20,9 +20,9 @@ class PerceptronSegmenter:
 
     """
 
-    web_words = {"http:", ".html", "www", ".tr", ".edu", "._zem.com", ".net", ".gov", "._zem.org", "@"}
-    lowercase_vowels = "aeıioöuüâîû"
-    uppercase_vowels = "AEIİOÖUÜÂÎÛ"
+    web_words = ("http:", ".html", "www", ".tr", ".edu", "._zem.com", ".net", ".gov", "._zem.org", "@")
+    lowercase_vowels = set("aeıioöuüâîû")
+    uppercase_vowels = set("AEIİOÖUÜÂÎÛ")
 
     def __init__(self):
         self.turkish_abbreviation_set = self.load_abbreviations()
@@ -99,9 +99,9 @@ class PerceptronSegmenter:
         :return: a specific character depending on the letter
         """
         if letter.isupper():
-            c = 86 if cls.uppercase_vowels.find(letter) >= 0 else 67  # 86 -> 'V', 67 -> 'C'
+            c = 86 if letter in cls.uppercase_vowels else 67  # 86 -> 'V', 67 -> 'C'
         elif letter.islower():
-            c = 118 if cls.lowercase_vowels.find(letter) >= 0 else 99  # 118 -> 'v', 99 -> 'c'
+            c = 118 if letter in cls.lowercase_vowels else 99  # 118 -> 'v', 99 -> 'c'
         elif letter.isdigit():
             c = 100  # 100 -> 'd'
         elif letter.isspace():

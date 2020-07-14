@@ -80,7 +80,7 @@ class TurkishMorphology:
     def analyze_without_cache(self, word: str = None, token: Token = None) -> WordAnalysis:
         if word:
             tokens: List[Token] = self.tokenizer.tokenize(word)
-            return WordAnalysis(word, [], normalized_input=word) if len(tokens) != 1 else \
+            return WordAnalysis(word, (), normalized_input=word) if len(tokens) != 1 else \
                 self.analyze_without_cache(token=tokens[0])
         else:  # token is not None
             word = token.content  # equal to token.getText()

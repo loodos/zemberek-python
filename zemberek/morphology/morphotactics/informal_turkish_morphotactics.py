@@ -22,7 +22,7 @@ class InformalTurkishMorphotactics(TurkishMorphotactics):
                 .informal_().mapped_morpheme_(self.a1pl).build())
         self.a1sgInformal = self.add_to_morpheme_map(
             Morpheme.builder("A1sg_Informal", "A1sg_Informal")
-                .informal_().mapped_morpheme_(self.a1sg).build());
+                .informal_().mapped_morpheme_(self.a1sg).build())
         self.prog1Informal = self.add_to_morpheme_map(
             Morpheme.builder("Prog1_Informal", "Prog1_Informal")
                 .informal_().mapped_morpheme_(self.prog1).build())
@@ -60,7 +60,8 @@ class InformalTurkishMorphotactics(TurkishMorphotactics):
         self.stem_transitions = StemTransitionsMapBased(lexicon, self)
 
     def add_graph(self):
-        self.verbRoot_S.add_(self.vProgYor_S_Inf, "Iyo", Conditions.not_have(p_attribute=PhoneticAttribute.LastLetterVowel))
+        self.verbRoot_S.add_(self.vProgYor_S_Inf, "Iyo",
+                             Conditions.not_have(p_attribute=PhoneticAttribute.LastLetterVowel))
         self.verbRoot_VowelDrop_S.add_(self.vProgYor_S_Inf, "Iyo")
         self.vProgYor_S_Inf.add_(self.vA1sg_ST, "m").add_(self.vA2sg_ST, "sun").add_(self.vA2sg_ST, "n").add_empty(
             self.vA3sg_ST).add_(self.vA1pl_ST, "z").add_(self.vA2pl_ST, "sunuz").add_(self.vA2pl_ST, "nuz").add_(

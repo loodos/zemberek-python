@@ -44,10 +44,10 @@ def load_common_split() -> Dict[str, str]:
     return common_splits
 
 
-def load_multimap(resource: str) -> Dict[str, List[str]]:
+def load_multimap(resource: str) -> Dict[str, Tuple[str]]:
     with open(resource, "r", encoding="utf-8") as f:
         lines: List[str] = f.read().split('\n')
-    multimap: Dict[str, List[str]] = {}
+    multimap: Dict[str, Tuple[str, ...]] = {}
     for i, line in enumerate(lines):
         if len(line.strip()) == 0:
             continue
@@ -56,21 +56,17 @@ def load_multimap(resource: str) -> Dict[str, List[str]]:
             raise BaseException(f"Line needs to have `=` symbol. But it is: {i} -" + line)
         key, value = line[0:index].strip(), line[index + 1:].strip()
         if value.find(',') >= 0:
-            for token in value.split(','):
-                if key in multimap.keys():
-                    multimap[key].append(token)
-                else:
-                    multimap[key] = [token]
+            if key in multimap.keys():
+                multimap[key] = tuple(value.split(','))
         else:
             if key in multimap.keys():
-                multimap[key].append(value)
+                multimap[key] = multimap[key] + (value,)
             else:
-                multimap[key] = [value]
+                multimap[key] = (value,)
     return multimap
 
 
 class TurkishSentenceNormalizer:
-
     START: 'TurkishSentenceNormalizer.Candidate'
     END: 'TurkishSentenceNormalizer.Candidate'
     END_CANDIDATES: 'TurkishSentenceNormalizer.Candidates'
@@ -78,7 +74,7 @@ class TurkishSentenceNormalizer:
     def __init__(self, morphology: TurkishMorphology):
         self.morphology = morphology
         self.analysis_converter: InformalAnalysisConverter = InformalAnalysisConverter(morphology.word_generator)
-        self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", "resources/lm.2gram.slm")).\
+        self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", "resources/lm.2gram.slm")). \
             log_base(math.e).build()
 
         graph = StemEndingGraph(morphology)
@@ -97,11 +93,12 @@ class TurkishSentenceNormalizer:
         self.common_connected_suffixes: FrozenSet[str] = frozenset(lines)
         self.always_apply_deasciifier = False
 
-        self.lookup_manual: Dict[str, List[str]] = load_multimap(
+        self.lookup_manual: Dict[str, Tuple[str]] = load_multimap(
             resource_filename("zemberek", "resources/normalization/candidates-manual.txt"))
-        self.lookup_from_graph: Dict[str, List[str]] = load_multimap(resource_filename("zemberek", "resources/"
-                                                                     "normalization/lookup-from-graph.txt"))
-        self.lookup_from_ascii: Dict[str, List[str]] = load_multimap(
+        self.lookup_from_graph: Dict[str, Tuple[str]] = load_multimap(resource_filename("zemberek",
+                                                                                        "resources/normalization/"
+                                                                                        "lookup-from-graph.txt"))
+        self.lookup_from_ascii: Dict[str, Tuple[str]] = load_multimap(
             resource_filename("zemberek", "resources/normalization/ascii-map.txt"))
         for s in self.lookup_manual.keys():
             try:
@@ -109,7 +106,7 @@ class TurkishSentenceNormalizer:
             except KeyError:
                 pass
 
-        self.informal_ascii_tolerant_morphology = TurkishMorphology.builder(morphology.lexicon)\
+        self.informal_ascii_tolerant_morphology = TurkishMorphology.builder(morphology.lexicon) \
             .use_informal_analysis().ignore_diacritics_in_analysis_().build()
 
     def normalize(self, sentence: str) -> str:
@@ -126,9 +123,9 @@ class TurkishSentenceNormalizer:
 
             candidates: Set[str] = set()
 
-            candidates.update(self.lookup_manual.get(current, []))
-            candidates.update(self.lookup_from_graph.get(current, []))
-            candidates.update(self.lookup_from_ascii.get(current, []))
+            candidates.update(self.lookup_manual.get(current, ()))
+            candidates.update(self.lookup_from_graph.get(current, ()))
+            candidates.update(self.lookup_from_ascii.get(current, ()))
 
             analyses: WordAnalysis = self.informal_ascii_tolerant_morphology.analyze(current)
 
@@ -139,7 +136,7 @@ class TurkishSentenceNormalizer:
                     if result:
                         candidates.add(result.surface)
                 else:
-                    results: List[WordGenerator.Result] = self.morphology.word_generator.generate(
+                    results: Tuple[WordGenerator.Result] = self.morphology.word_generator.generate(
                         item=analysis.item, morphemes=analysis.get_morphemes()
                     )
                     for result in results:
@@ -158,12 +155,13 @@ class TurkishSentenceNormalizer:
                 candidates.add(current)
 
             result = TurkishSentenceNormalizer.Candidates(current_token.content,
-                                                          [TurkishSentenceNormalizer.Candidate(s) for s in candidates])
+                                                          tuple(TurkishSentenceNormalizer.Candidate(s) for
+                                                                s in candidates))
             candidates_list.append(result)
 
         return ' '.join(self.decode(candidates_list))
 
-    def decode(self, candidates_list: List['TurkishSentenceNormalizer.Candidates']) -> List[str]:
+    def decode(self, candidates_list: List['TurkishSentenceNormalizer.Candidates']) -> Tuple[str]:
 
         current: List['TurkishSentenceNormalizer.Hypothesis'] = []
         next_: List['TurkishSentenceNormalizer.Hypothesis'] = []
@@ -210,12 +208,12 @@ class TurkishSentenceNormalizer:
             seq.append(h.current.content)
             h = h.previous
 
-        return list(reversed(seq))
+        return tuple(reversed(seq))
 
     @staticmethod
-    def get_best(l: List['TurkishSentenceNormalizer.Hypothesis']) -> 'TurkishSentenceNormalizer.Hypothesis':
+    def get_best(li: List['TurkishSentenceNormalizer.Hypothesis']) -> 'TurkishSentenceNormalizer.Hypothesis':
         best = None
-        for t in l:
+        for t in li:
             if t:
                 if not best or t.score > best.score:
                     best = t
@@ -223,17 +221,17 @@ class TurkishSentenceNormalizer:
 
     def pre_process(self, sentence: str) -> str:
         sentence = sentence.translate(TurkishAlphabet.lower_map).lower()
-        tokens: Tuple[Token] = tuple(TurkishTokenizer.DEFAULT.tokenize(sentence))
+        tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(sentence)
         s: str = self.replace_common(tokens)
-        tokens: Tuple[Token] = tuple(TurkishTokenizer.DEFAULT.tokenize(s))
+        tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
         s = self.combine_necessary_words(tokens)
-        tokens: Tuple[Token] = tuple(TurkishTokenizer.DEFAULT.tokenize(s))
+        tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
         s = self.split_necessary_words(tokens, use_look_up=False)
         if self.always_apply_deasciifier:
             raise NotImplementedError
-        tokens: Tuple[Token] = tuple(TurkishTokenizer.DEFAULT.tokenize(s))
+        tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
         s = self.combine_necessary_words(tokens)
-        tokens: Tuple[Token] = tuple(TurkishTokenizer.DEFAULT.tokenize(s))
+        tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
         return self.split_necessary_words(tokens, use_look_up=True)
 
     def split_necessary_words(self, tokens: Tuple[Token], use_look_up: bool) -> str:
@@ -263,7 +261,7 @@ class TurkishSentenceNormalizer:
                             return inp
 
                     if self.has_regular_analysis(head):
-                        return head + " " + tail
+                        return f"{head} {tail}"
                     else:
                         return inp
         return inp
@@ -327,7 +325,7 @@ class TurkishSentenceNormalizer:
     def is_word(token: Token) -> bool:
         typ: Token.Type = token.type_
         return typ == Token.Type.Word or typ == Token.Type.WordWithSymbol or typ == Token.Type.WordAlphanumerical \
-            or typ == Token.Type.UnknownWord
+               or typ == Token.Type.UnknownWord
 
     def replace_common(self, tokens: Tuple[Token]) -> str:
         result: List[str] = []
@@ -361,7 +359,6 @@ class TurkishSentenceNormalizer:
             return "Hypothesis{history=" + f"{' '.join([str(s) for s in self.history])}" + f", current={self.current}" \
                                                                                            f", score={self.score}" + '}'
 
-
     class Candidate:
         def __init__(self, content: str):
             self.content = content
@@ -381,7 +378,7 @@ class TurkishSentenceNormalizer:
             return "Candidate{content='" + self.content + f"', score={self.score}" + '}'
 
     class Candidates:
-        def __init__(self, word: str, candidates: List['TurkishSentenceNormalizer.Candidate']):
+        def __init__(self, word: str, candidates: Tuple['TurkishSentenceNormalizer.Candidate']):
             self.word = word
             self.candidates = candidates
 
@@ -392,6 +389,6 @@ class TurkishSentenceNormalizer:
 TurkishSentenceNormalizer.START = TurkishSentenceNormalizer.Candidate(content="<s>")
 TurkishSentenceNormalizer.END = TurkishSentenceNormalizer.Candidate(content="</s>")
 TurkishSentenceNormalizer.END_CANDIDATES = TurkishSentenceNormalizer.Candidates(word="</s>",
-                                                                                candidates=[
-                                                                                    TurkishSentenceNormalizer.END
-                                                                                ])
+                                                                                candidates=(
+                                                                                    TurkishSentenceNormalizer.END,
+                                                                                ))

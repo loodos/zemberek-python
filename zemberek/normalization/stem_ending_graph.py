@@ -26,17 +26,12 @@ class StemEndingGraph:
         if not path:
             path = resource_filename("zemberek", "resources/normalization/endings.txt")
         with open(path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-        return tuple(line.replace('\n', "") for line in lines)
+            lines = tuple(line.replace('\n', "") for line in f.readlines())
+        return lines
 
     def generate_stem_graph(self) -> CharacterGraph:
         stem_graph = CharacterGraph()
         stem_transitions = self.morphology.morphotactics.stem_transitions
-
-        """
-        debug
-        """
-        s = stem_transitions.get_transitions()
 
         for transition in stem_transitions.get_transitions():
             if len(transition.surface) != 0 and transition.item.primary_pos != PrimaryPos.Punctuation:

@@ -65,21 +65,21 @@ class Node:
     def get_immediate_child_nodes(self) -> Tuple['Node']:
         return tuple(self.nodes.values())
 
-    def get_immediate_child_node_iterable(self) -> List['Node']:
-        return list(self.nodes.values())
+    def get_immediate_child_node_iterable(self) -> Tuple['Node']:
+        return tuple(self.nodes.values())
 
-    def get_all_child_nodes(self) -> List['Node']:
-        node_list = list(self.nodes.values())
+    def get_all_child_nodes(self) -> Tuple['Node', ...]:
         if self.epsilon_nodes is None:
-            return node_list
+            return tuple(self.nodes.values())
         else:
+            node_list = list(self.nodes.values())
             for empty_node in self.epsilon_nodes:
                 for n in empty_node.nodes.values():
                     node_list.append(n)
 
-            return node_list
+            return tuple(node_list)
 
-    def get_child_list(self, c: str = None, char_array: List[str] = None) -> List['Node']:
+    def get_child_list(self, c: str = None, char_array: Tuple[str, ...] = None) -> Tuple['Node', ...]:
         children = []
         if c:
             self.add_if_child_exists(c, children)
@@ -93,7 +93,7 @@ class Node:
                     for empty_node in self.epsilon_nodes:
                         empty_node.add_if_child_exists(c_, children)
 
-        return children
+        return tuple(children)
 
     def connect_epsilon(self, node: 'Node') -> bool:
         if self.epsilon_nodes is None:

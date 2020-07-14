@@ -36,15 +36,15 @@ class TurkishSpellChecker:
             self.decoder = decoder
             self.char_matcher = matcher
 
-    def suggest_for_word(self, word: str, lm: SmoothLM = None) -> List[str]:
+    def suggest_for_word(self, word: str, lm: SmoothLM = None) -> Tuple[str]:
         if not lm:
             lm = self.unigram_model
-        unranked: List[str] = self.get_unranked_suggestions(word)
+        unranked: Tuple[str] = self.get_unranked_suggestions(word)
         return self.rank_with_unigram_probability(unranked, lm)
 
     def suggest_for_word_for_normalization(self, word: str, left_context: str, right_context: str, lm: SmoothLM) -> \
-            List[str]:
-        unranked: List[str] = self.get_unranked_suggestions(word)
+            Tuple[str]:
+        unranked: Tuple[str] = self.get_unranked_suggestions(word)
         if lm is None:
             logger.warning("No language model provided. Returning unraked results.")
             return unranked
@@ -79,12 +79,12 @@ class TurkishSpellChecker:
             results.append((string, score))
 
         results.sort(key=itemgetter(1), reverse=True)
-        return [item for item, _ in results]
+        return tuple(item for item, _ in results)
 
-    def get_unranked_suggestions(self, word: str) -> List[str]:
+    def get_unranked_suggestions(self, word: str) -> Tuple[str]:
 
         normalized = TurkishAlphabet.INSTANCE.normalize(re.sub("['’]", "", word))
-        strings: List[str] = self.decoder.get_suggestions(normalized, self.char_matcher)
+        strings: Tuple[str] = self.decoder.get_suggestions(normalized, self.char_matcher)
         case_type = self.formatter.guess_case(word)
         if case_type == WordAnalysisSurfaceFormatter.CaseType.MIXED_CASE or case_type == \
                 WordAnalysisSurfaceFormatter.CaseType.LOWER_CASE:
@@ -100,9 +100,9 @@ class TurkishSpellChecker:
                 formatted = self.formatter.format_to_case(analysis, case_type, self.get_apostrophe(word))
                 results.add(formatted)
 
-        return list(results)
+        return tuple(results)
 
-    def rank_with_unigram_probability(self, strings: List[str], lm: SmoothLM) -> List[str]:
+    def rank_with_unigram_probability(self, strings: Tuple[str], lm: SmoothLM) -> Tuple[str]:
         if lm is None:
             logger.warning("No language model provided, returning unranked results.")
             return strings
@@ -114,7 +114,7 @@ class TurkishSpellChecker:
                 results.append((w, lm.get_unigram_probability(word_index)))
 
             results.sort(key=itemgetter(1), reverse=True)
-            return [word for word, _ in results]
+            return tuple(word for word, _ in results)
 
     @staticmethod
     def normalize_for_lm(s: str) -> str:

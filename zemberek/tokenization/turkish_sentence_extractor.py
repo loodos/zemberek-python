@@ -1,6 +1,6 @@
 import re
 
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Tuple
 
 from zemberek.core.turkish import TurkishAlphabet
 from .perceptron_segmenter import PerceptronSegmenter
@@ -23,8 +23,8 @@ class TurkishSentenceExtractor(PerceptronSegmenter):
                 special quoting characters
     """
 
-    BOUNDARY_CHARS = ".!?…"
-    double_quotes = "\"”“»«"
+    BOUNDARY_CHARS = set(".!?…")
+    double_quotes = set("\"”“»«")
 
     def __init__(self, do_not_split_in_double_quotes: bool = False):
         super().__init__()
@@ -139,7 +139,7 @@ class TurkishSentenceExtractor(PerceptronSegmenter):
             self.current_word_no_punctuation = re.sub(r"[.!?…]", "", self.current_word)
 
             next_word_exists = input_string[self.next_space+1:].find(' ')
-            if next_word_exists == -1: # no space character ahead
+            if next_word_exists == -1:  # no space character ahead
                 self.next_word = input_string[self.next_space+1:]
             else:
                 self.next_word = input_string[self.next_space+1: next_word_exists]
@@ -172,7 +172,7 @@ class TurkishSentenceExtractor(PerceptronSegmenter):
                 self.current_word in self.abbr_set or self.left_chunk_until_boundary in self.abbr_set or \
                 PerceptronSegmenter.potential_website(self.current_word)
 
-        def extract_features(self) -> List[str]:
+        def extract_features(self) -> Tuple[str]:
             """
             function that extracts features from according to a set of rules defined by the owner of
             this repository. Each feature extracted in this method has a learned weight in
@@ -212,9 +212,4 @@ class TurkishSentenceExtractor(PerceptronSegmenter):
                 if all_digit:
                     features.append("11d:true")
 
-            return features
-
-
-
-
-
+            return tuple(features)

@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 class WordAnalysis:
     EMPTY_INPUT_RESULT: 'WordAnalysis' = None
 
-    def __init__(self, inp: str, analysis_results: Tuple['SingleAnalysis'], normalized_input: str = None):
+    def __init__(self, inp: str, analysis_results: Tuple['SingleAnalysis', ...], normalized_input: str = None):
         self.inp = inp
         self.analysis_results = analysis_results
         self.normalized_input = self.inp if normalized_input is None else normalized_input
@@ -51,4 +51,4 @@ class WordAnalysis:
         raise StopIteration
 
 
-WordAnalysis.EMPTY_INPUT_RESULT = WordAnalysis("", [])
+WordAnalysis.EMPTY_INPUT_RESULT = WordAnalysis("", ())

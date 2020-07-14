@@ -24,7 +24,7 @@ class SuffixTransition(MorphemeTransition):
             self.surface_template = "" if builder.surface_template is None else builder.surface_template
             self.condition = builder.condition
             self.conditions_from_template(self.surface_template)
-            self.token_list = [item for item in SurfaceTransition.SuffixTemplateTokenizer(self.surface_template)]
+            self.token_list = tuple(item for item in SurfaceTransition.SuffixTemplateTokenizer(self.surface_template))
             self.condition_count = self.count_conditions()
             self.surface_cache = AttributeToSurfaceCache()
 
