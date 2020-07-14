@@ -1461,7 +1461,7 @@ class StemTransitionsBase:
                               "sen_Pron_Pers", "demek_Verb", "yemek_Verb", "imek_Verb", "birbiri_Pron_Quant",
                               "çoğu_Pron_Quant", "öbürü_Pron_Quant", "birçoğu_Pron_Quant"}
 
-    def generate(self, item: DictionaryItem) -> List[StemTransition]:
+    def generate(self, item: DictionaryItem) -> Tuple[StemTransition, ...]:
         if item.id_ in self.special_roots:
             return self.handle_special_roots(item)
         elif self.has_modifier_attribute(item):
@@ -1470,19 +1470,22 @@ class StemTransitionsBase:
             phonetic_attributes: Set[PhoneticAttribute] = self.calculate_attributes(item.pronunciation)
             transition = StemTransition(item.root, item, phonetic_attributes,
                                         self.morphotactics.get_root_state(item, phonetic_attributes))
-            return [transition]
+            return (transition,)
 
     def has_modifier_attribute(self, item: DictionaryItem) -> bool:
-        for attr in self.modifiers:
+        if self.modifiers & item.attributes:
+            return True
+        """for attr in self.modifiers:
             if attr in item.attributes:
                 return True
+        return False"""
         return False
 
     @staticmethod
     def calculate_attributes(input_: str) -> Set[PhoneticAttribute]:
         return AttributesHelper.get_morphemic_attributes(input_)
 
-    def generate_modified_root_nodes(self, dic_item: DictionaryItem) -> List[StemTransition]:
+    def generate_modified_root_nodes(self, dic_item: DictionaryItem) -> Tuple[StemTransition, ...]:
 
         modified_seq = dic_item.pronunciation
         original_attrs = self.calculate_attributes(dic_item.pronunciation)
@@ -1500,7 +1503,7 @@ class StemTransitionsBase:
                 if dic_item.lemma.endswith("nk"):
                     voiced = 'g'
 
-                modified_seq = modified_seq[: len(modified_seq) - 1] + voiced + modified_seq[len(modified_seq):]
+                modified_seq = modified_seq[: -1] + voiced
                 try:
                     modified_attrs.remove(PhoneticAttribute.LastLetterVoicelessStop)
                 except KeyError as ke:
@@ -1517,11 +1520,11 @@ class StemTransitionsBase:
             elif attribute == RootAttribute.LastVowelDrop:
                 last_letter = self.alphabet.get_last_letter(modified_seq)
                 if last_letter.is_vowel():
-                    modified_seq = modified_seq[:len(modified_seq) - 1]
+                    modified_seq = modified_seq[:-1]
                     modified_attrs.add(PhoneticAttribute.ExpectsConsonant)
                     modified_attrs.add(PhoneticAttribute.CannotTerminate)
                 else:
-                    modified_seq = modified_seq[: len(modified_seq) - 2] + modified_seq[len(modified_seq) - 1:]
+                    modified_seq = modified_seq[: -2] + modified_seq[-1:]
                     if dic_item.primary_pos != PrimaryPos.Verb:
                         original_attrs.add(PhoneticAttribute.ExpectsConsonant)
                     else:
@@ -1533,16 +1536,19 @@ class StemTransitionsBase:
 
             elif attribute == RootAttribute.InverseHarmony:
                 original_attrs.add(PhoneticAttribute.LastVowelFrontal)
+                modified_attrs.add(PhoneticAttribute.LastVowelFrontal)
                 try:
                     original_attrs.remove(PhoneticAttribute.LastVowelBack)
-                    modified_attrs.add(PhoneticAttribute.LastVowelFrontal)
+                except KeyError as ke:
+                    logger.debug("Non existent key original_attrs: " + str(ke))
+                try:
                     modified_attrs.remove(PhoneticAttribute.LastVowelBack)
                 except KeyError as ke:
-                    logger.debug("Non existent key in either modified_attrs or original_attrs: " + str(ke))
+                    logger.debug("Non existent key modified_attrs: " + str(ke))
 
             elif attribute == RootAttribute.ProgressiveVowelDrop:
                 if len(modified_seq) > 1:
-                    modified_seq = modified_seq[:len(modified_seq) - 1]
+                    modified_seq = modified_seq[:-1]
                     if self.alphabet.contains_vowel(modified_seq):
                         modified_attrs = self.calculate_attributes(modified_seq)
 
@@ -1557,11 +1563,11 @@ class StemTransitionsBase:
 
         modified: StemTransition = StemTransition(modified_seq, dic_item, modified_attrs, modified_root_state)
         if original == modified:
-            return [original]
+            return (original,)
         else:
-            return [original, modified]
+            return original, modified
 
-    def handle_special_roots(self, item: DictionaryItem) -> List[StemTransition]:
+    def handle_special_roots(self, item: DictionaryItem) -> Tuple[StemTransition, ...]:
         id_ = item.id_
         original_attrs = self.calculate_attributes(item.pronunciation)
         unmodified_root_state = self.morphotactics.get_root_state(item, original_attrs)
@@ -1579,11 +1585,11 @@ class StemTransitionsBase:
             else:
                 raise Exception("No root morpheme state found for " + item.id_)
 
-            m = item.root[0: len(item.root) - 1]
+            m = item.root[:-1]
             modified = StemTransition(m, item, self.calculate_attributes(m), root_for_modified)
             modified.phonetic_attributes.add(PhoneticAttribute.ExpectsConsonant)
             modified.phonetic_attributes.add(PhoneticAttribute.CannotTerminate)
-            return [original, modified]
+            return original, modified
         elif id_ == "ben_Pron_Pers" or id_ == "sen_Pron_Pers":
             original = StemTransition(item.root, item, original_attrs, unmodified_root_state)
             if item.lemma == "ben":
@@ -1594,7 +1600,7 @@ class StemTransitionsBase:
                                           self.morphotactics.pronPers_Mod_S)
             original.phonetic_attributes.add(PhoneticAttribute.UnModifiedPronoun)
             modified.phonetic_attributes.add(PhoneticAttribute.ModifiedPronoun)
-            return [original, modified]
+            return original, modified
         elif id_ == "demek_Verb" or id_ == "yemek_Verb":
             original = StemTransition(item.root, item, original_attrs, self.morphotactics.vDeYeRoot_S)
 
@@ -1604,10 +1610,10 @@ class StemTransitionsBase:
             else:
                 modified = StemTransition("yi", item, self.calculate_attributes("yi"),
                                           self.morphotactics.vDeYeRoot_S)
-            return [original, modified]
+            return original, modified
         elif id_ == "imek_Verb":
             original = StemTransition(item.root, item, original_attrs, self.morphotactics.imekRoot_S)
-            return [original]
+            return (original,)
         elif id_ == "birbiri_Pron_Quant" or id_ == "çoğu_Pron_Quant" or id_ == "öbürü_Pron_Quant" or \
                 id_ == "birçoğu_Pron_Quant":
             original = StemTransition(item.root, item, original_attrs, self.morphotactics.pronQuant_S)
@@ -1626,7 +1632,7 @@ class StemTransitionsBase:
                                           self.morphotactics.pronQuantModified_S)
             original.phonetic_attributes.add(PhoneticAttribute.UnModifiedPronoun)
             modified.phonetic_attributes.add(PhoneticAttribute.ModifiedPronoun)
-            return [original, modified]
+            return original, modified
         else:
             raise Exception("Lexicon Item with special stem change cannot be handled:" + item.id_)
 
@@ -1655,7 +1661,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
         self.lock.acquire_write()
 
         try:
-            transitions: List[StemTransition] = self.generate(item)
+            transitions: Tuple[StemTransition] = self.generate(item)
             for transition in transitions:
                 self.add_stem_transition(transition)
 
@@ -1663,9 +1669,9 @@ class StemTransitionsMapBased(StemTransitionsBase):
                 if item in self.different_stem_items.keys():
                     self.different_stem_items[item].extend(transitions)
                 else:
-                    self.different_stem_items[item] = transitions
+                    self.different_stem_items[item] = list(transitions)
         except ValueError:
-            logger.debug('Cannot generate stem transition for %s with reason: '.format(item.id_))
+            logger.debug('Cannot generate stem transition for %s: '.format(item.id_))
         finally:
             self.lock.release_write()
 
@@ -1673,7 +1679,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
         self.lock.acquire_write()
 
         try:
-            transitions: List[StemTransition] = self.generate(item)
+            transitions: Tuple[StemTransition] = self.generate(item)
             for transition in transitions:
                 self.remove_stem_node(transition)
 
@@ -1706,9 +1712,8 @@ class StemTransitionsMapBased(StemTransitionsBase):
         if surface_form in self.multi_stems.keys():
             self.multi_stems[surface_form].append(stem_transition)
         elif surface_form in self.single_stems.keys():
-            self.multi_stems[surface_form] = [self.single_stems[surface_form]]
+            self.multi_stems[surface_form] = [self.single_stems[surface_form], stem_transition]
             self.single_stems.pop(surface_form)
-            self.multi_stems[surface_form].append(stem_transition)
         else:
             self.single_stems[surface_form] = stem_transition
 
@@ -1716,7 +1721,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
         if not stem:
             result = set(self.single_stems.values())
             for value in self.multi_stems.values():
-                result |= (set(value))
+                result |= set(value)
             return result
         else:
             self.lock.acquire_read()
@@ -1739,7 +1744,7 @@ class StemTransitionsMapBased(StemTransitionsBase):
                 return tuple(self.different_stem_items[item])
             else:
                 transitions: Tuple[StemTransition] = self.get_transitions(item.root)
-                return tuple(s for s in transitions if s.item == item) if len(transitions) > 0 else ()
+                return tuple(s for s in transitions if s.item == item)
         finally:
             self.lock.release_read()
 
@@ -1790,7 +1795,10 @@ class StemTransitionsMapBased(StemTransitionsBase):
             for s in self.single_stems.keys():
                 ascii_ = TurkishAlphabet.INSTANCE.to_ascii(s)
                 if TurkishAlphabet.INSTANCE.contains_ascii_related(s):
-                    self.ascii_keys[ascii_] = [s]
+                    if ascii_ not in self.ascii_keys.keys():
+                        self.ascii_keys[ascii_] = [s]
+                    else:
+                        self.ascii_keys[ascii_].append(s)
 
             for sts in self.multi_stems.values():
                 for st in sts:

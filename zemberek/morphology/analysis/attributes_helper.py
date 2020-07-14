@@ -48,6 +48,10 @@ class AttributesHelper:
                 attrs.update(cls.NO_VOWEL_ATTRIBUTES)
                 try:
                     attrs.remove(PhoneticAttribute.LastLetterVowel)
+                except KeyError:
+                    pass
+
+                try:
                     attrs.remove(PhoneticAttribute.ExpectsConsonant)
                 except KeyError:
                     pass
