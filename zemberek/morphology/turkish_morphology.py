@@ -4,6 +4,7 @@ import time
 import logging
 
 from typing import List, Tuple, TYPE_CHECKING
+from functools import lru_cache
 
 if TYPE_CHECKING:
     from ..tokenization.token import Token
@@ -61,6 +62,7 @@ class TurkishMorphology:
         logger.info(f"Initialized in {time.time() - start_time}")
         return instance
 
+    @lru_cache(maxsize=200)
     def analyze(self, word: str) -> WordAnalysis:
         return self.analyze_with_cache(word) if self.use_cache else self.analyze_without_cache(word=word)
 

@@ -24,7 +24,7 @@ class SuffixTransition(MorphemeTransition):
             self.surface_template = "" if builder.surface_template is None else builder.surface_template
             self.condition = builder.condition
             self.conditions_from_template(self.surface_template)
-            self.token_list = tuple(item for item in SurfaceTransition.SuffixTemplateTokenizer(self.surface_template))
+            self.token_list = [item for item in SurfaceTransition.SuffixTemplateTokenizer(self.surface_template)]
             self.condition_count = self.count_conditions()
             self.surface_cache = AttributeToSurfaceCache()
 
@@ -64,8 +64,8 @@ class SuffixTransition(MorphemeTransition):
         return st
 
     def connect(self):
-        self.from_.add_outgoing([self])
-        self.to.add_incoming([self])
+        self.from_.add_outgoing((self,))
+        self.to.add_incoming((self,))
 
     def count_conditions(self) -> int:
         if self.condition is None:
@@ -85,7 +85,7 @@ class SuffixTransition(MorphemeTransition):
             if lower.startswith("+") and TurkishAlphabet.INSTANCE.is_vowel(lower[2]) or first_char_vowel:
                 c = Conditions.not_have(p_attribute=PhoneticAttribute.ExpectsConsonant)
 
-            if c is not None:
+            if c:
                 if self.condition is None:
                     self.condition = c
                 else:
