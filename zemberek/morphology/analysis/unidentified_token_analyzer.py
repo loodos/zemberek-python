@@ -67,7 +67,7 @@ class UnidentifiedTokenAnalyzer:
 
         ss = se.stem
         if se.stem.endswith("."):
-            ss = se.stem[0: len(se.stem) - 1]
+            ss = se.stem[:-1]
 
         decimal = TurkishNumbers.roman_to_decimal(ss)
         if decimal == -1:
@@ -172,7 +172,7 @@ class UnidentifiedTokenAnalyzer:
         se: StemAndEnding = self.get_from_numeral(s)
 
         if se.stem.endswith("."):
-            ss = se.stem[0: len(se.stem) - 1]
+            ss = se.stem[:-1]
             lemma = self.numeral_ending_machine.find(ss)
             lemma = self.ordinal_map.get(lemma)
         else:

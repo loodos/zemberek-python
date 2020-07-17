@@ -63,3 +63,68 @@ Mutlu olma sanatının özü bu değildir.
 Gerçek mutluluk, kişinin her türlü olaya ve duruma karşı kendini pozitif tutarak mutlu hissedebilmesi halidir.
 Bu davranış şeklini edinen insan, zor günlerde güçlü, mutlu günlerde zevk alan biri olur ve mutluluğu kalıcı kılar.
 
+    *** Version 0.1.0   ***
+
+2020-07-18 00:38:42,509 - zemberek.morphology.turkish_morphology - INFO
+Msg: Initialized in 9.12086796760559
+
+2020-07-18 00:38:53,401 - __main__ - INFO
+Msg: Normalization instance created in: 10.89151382446289 s
+
+Yrn okua gidicem
+yarın okula gideceğim
+
+Tmm, yarin havuza giricem ve aksama kadar yaticam :)
+tamam , yarın havuza gireceğim ve akşama kadar yatıcam :)
+
+ah aynen ya annemde fark ettı siz evinizden cıkmayın diyo
+ah aynen ya annemde fark etti siz evinizden çıkmayın diyor
+
+gercek mı bu? Yuh! Artık unutulması bile beklenmiyo
+gerçek mi bu ? yuh ! artık unutılması bile beklenmiyor
+
+Hayır hayat telaşm olmasa alacam buraları gökdelen dikicem.
+hayır hayat telaşı olmasa alacam buraları gökdelen dikeceğim .
+
+yok hocam kesınlıkle oyle birşey yok
+yok hocam kesinlikle öyle bir şey yok
+
+herseyi soyle hayatında olmaması gerek bence boyle ınsanların falan baskı yapıyosa
+herşeyi söyle hayatında olmaması gerek bence böyle insanların falan baskı yapıyorsa
+
+email adresim abdullah.oluk@loodos.com
+mail adresim abdullah.oluk@loodos.com
+
+Kredi başvrusu yapmk istiyrum.
+kredi başvurusu yapmak istiyorum .
+
+Bankanizin hesp blgilerini ogrenmek istyorum.
+bankanızın hesap bilgilerini öğrenmek istiyorum .
+
+2020-07-18 00:38:55,024 - __main__ - INFO
+Msg: Sentences normalized in: 1.6224501132965088 s
+
+2020-07-18 00:39:02,928 - __main__ - INFO
+Msg: Spell checker instance created in: 7.9038310050964355 s
+
+okuyablirim = okuyabilirim
+tartısıyor = tartışıyor tartılıyor
+Ankar'ada = Ankara'da Ankara'ya Ankara'dan Ankaray'a Ankaray'da Ankara'na Angara'da Ankara'mda Ankara'nda Ankara'ma Ankara'ca Antara'da Anakara'da
+knlıca = kanlıca kanlıca unlıca kınlıca kılıca anlıca kalıca onlıca
+yapablrim =
+kıredi = kredi küredi
+geldm = geldi geldim gelem gelim
+geliyom = geliyor geliyim
+aldm = aldı alım aldım alem alim alim alam aldo aldi Al'ım Al'dı alda Al'dım Aldi'm Al'da Aldo'm
+asln = asla aslan aslan aslı aslı asli aslen asan asın assn aslin As'lın asin As'lan As'la As'ın As'lı Aslı'n aslın
+2020-07-18 00:39:03,370 - __main__ - INFO
+Msg: Spells checked in: 0.442094087600708 s
+
+Extractor instance created in:  0.012758970260620117  s
+Sentences separated in 0.0007030963897705078s
+İnsanoğlu aslında ne para ne sevgi ne kariyer ne şöhret ne de çevre ile sonsuza dek mutlu olabilecek bir yapıya sahiptir.
+Dış kaynaklardan gelebilecek bu mutluluklar sadece belirli bir zaman için insanı mutlu kılıyor.
+Kişi bu kaynakları elde ettiği zaman belirli bir dönem için kendini iyi hissediyor, ancak alışma dönemine girdiği andan itibaren bu iyilik hali hızla tükeniyor.
+Mutlu olma sanatının özü bu değildir.
+Gerçek mutluluk, kişinin her türlü olaya ve duruma karşı kendini pozitif tutarak mutlu hissedebilmesi halidir.
+Bu davranış şeklini edinen insan, zor günlerde güçlü, mutlu günlerde zevk alan biri olur ve mutluluğu kalıcı kılar.

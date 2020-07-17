@@ -1,7 +1,5 @@
-import os
 import time
 import logging
-os.chdir("../")
 
 from zemberek import TurkishSpellChecker, TurkishSentenceNormalizer
 from zemberek import TurkishSentenceExtractor

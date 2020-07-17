@@ -59,7 +59,7 @@ class SuffixTransition(MorphemeTransition):
         st.from_ = self.from_
         st.to = self.to
         st.condition = self.condition
-        st.token_list = self.token_list
+        st.token_list = self.token_list.copy()
         st.surface_cache = self.surface_cache
         return st
 

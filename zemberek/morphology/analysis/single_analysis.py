@@ -109,7 +109,7 @@ class SingleAnalysis:
         return False
 
     def copy_for(self, item: DictionaryItem, stem: str) -> 'SingleAnalysis':
-        data: List['SingleAnalysis.MorphemeData'] = self.morpheme_data_list
+        data: List['SingleAnalysis.MorphemeData'] = self.morpheme_data_list.copy()
         data[0] = SingleAnalysis.MorphemeData(data[0].morpheme, stem)
         return SingleAnalysis(item, data, self.group_boundaries.copy())
 

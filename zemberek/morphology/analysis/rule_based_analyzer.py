@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 class RuleBasedAnalyzer:
 
     def __init__(self, morphotactics: TurkishMorphotactics):
-        self.lexicon = morphotactics.lexicon
-        self.stem_transitions = morphotactics.stem_transitions
+        self.lexicon = morphotactics.get_root_lexicon()
+        self.stem_transitions = morphotactics.get_stem_transitions()
         self.morphotactics = morphotactics
         self.debug_mode = False
         self.ascii_tolerant = False

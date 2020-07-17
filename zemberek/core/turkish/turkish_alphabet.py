@@ -34,6 +34,7 @@ class TurkishAlphabet:
         self.stop_consonants = "çkptÇKPT"
         self.voiceless_consonants = "çfhkpsştÇFHKPSŞT"
         self.turkish_specific = "çÇğĞıİöÖşŞüÜâîûÂÎÛ"
+        self.turkish_specific_lookup = set("çÇğĞıİöÖşŞüÜâîûÂÎÛ")
         self.turkish_ascii = "cCgGiIoOsSuUaiuAIU"
         self.ascii_eq_tr = set("cCgGiIoOsSuUçÇğĞıİöÖşŞüÜ")
         self.ascii_eq = "çÇğĞıİöÖşŞüÜcCgGiIoOsSuU"
@@ -60,7 +61,8 @@ class TurkishAlphabet:
         self.populate_dict(self.turkish_to_ascii_map, self.turkish_specific, self.turkish_ascii)
         self.populate_dict(self.foreign_diacritics_map, self.foreign_diacritics, self.diacritics_to_turkish)
 
-        # TO BE CONTINUED IF NECESSARY
+    def is_turkish_specific(self, c: str) -> bool:
+        return c in self.turkish_specific_lookup
 
     def contains_ascii_related(self, s: str) -> bool:
         for c in s:

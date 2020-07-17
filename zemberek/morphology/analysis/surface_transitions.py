@@ -29,7 +29,7 @@ class SurfaceTransition:
         return self.lexical_transition.to
 
     def __str__(self):
-        return ("" if len(self.surface) == 0 else self.surface + ":") + self.get_state().morpheme.id_
+        return ("" if len(self.surface) == 0 else self.surface + ":") + self.get_state().id_
 
     @staticmethod
     def generate_surface(transition: SuffixTransition, phonetic_attributes: Set[PhoneticAttribute]):

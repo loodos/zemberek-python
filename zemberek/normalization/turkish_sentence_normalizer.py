@@ -14,6 +14,7 @@ from zemberek.tokenization.token import Token
 from .stem_ending_graph import StemEndingGraph
 from .character_graph_decoder import CharacterGraphDecoder
 from .turkish_spell_checker import TurkishSpellChecker
+from .deasciifier.deasciifier import Deasciifier
 
 
 def load_replacements() -> Dict[str, str]:
@@ -89,6 +90,7 @@ class TurkishSentenceNormalizer:
         with open(resource_filename("zemberek", "resources/normalization/question-suffixes.txt"), "r",
                   encoding="utf-8") as f:
             lines = f.read().split('\n')
+        del f
 
         self.common_connected_suffixes: FrozenSet[str] = frozenset(lines)
         self.always_apply_deasciifier = False
@@ -227,8 +229,9 @@ class TurkishSentenceNormalizer:
         s = self.combine_necessary_words(tokens)
         tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
         s = self.split_necessary_words(tokens, use_look_up=False)
-        if self.always_apply_deasciifier:
-            raise NotImplementedError
+        if self.always_apply_deasciifier or self.probably_requires_deasciifier(s):
+            deasciifier = Deasciifier(s)
+            s = deasciifier.convert_to_turkish()
         tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
         s = self.combine_necessary_words(tokens)
         tokens: Tuple[Token] = TurkishTokenizer.DEFAULT.tokenize(s)
@@ -265,6 +268,15 @@ class TurkishSentenceNormalizer:
                     else:
                         return inp
         return inp
+
+    @staticmethod
+    def probably_requires_deasciifier(sentence: str) -> bool:
+        turkish_spec_count = 0
+        for c in sentence:
+            if c != 'ı' and c != 'I' and TurkishAlphabet.INSTANCE.is_turkish_specific(c):
+                turkish_spec_count += 1
+        ratio = turkish_spec_count * 1. / len(sentence)
+        return ratio < 0.1
 
     def combine_necessary_words(self, tokens: Tuple[Token]) -> str:
         result: List[str] = []
