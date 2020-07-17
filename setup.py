@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='zemberek',
-    version='0.0.1',
+    version='0.1.0',
     author='Loodos Tech',
     description='Python implementation of open source text processing library zemberek',
     packages=setuptools.find_packages(),
@@ -10,9 +10,10 @@ setuptools.setup(
     package_data={
       '': ["zemberek/resources/*.txt",
            "zemberek/resources/*.csv",
-           "zemberek/resources/*.slm"]
+           "zemberek/resources/*.slm",
+           "zemberek/resources/*.pickle"]
     },
-    url='git@gitlab.com:harun.uz/zemberek.git',
+    url='https://gitlab.com/loodos/inhouse/marvin/lds-marvin-zemberek-python.git',
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent"

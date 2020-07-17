@@ -29,35 +29,31 @@ class SingleAnalysis:
     def __str__(self):
         return self.format_string()
 
-    def format_string(self):
-        surfaces = self.morpheme_data_list
-
-        sb = "["
-        item = self.item
-        sb += item.lemma + ":" + item.primary_pos.short_form
-        if item.secondary_pos != SecondaryPos.None_:
-            sb += item.secondary_pos.short_form
-        sb += "] "
+    def format_string(self) -> str:
+        sb = [f"[{self.item.lemma}:{self.item.primary_pos.short_form}"]
+        if self.item.secondary_pos != SecondaryPos.None_:
+            sb.append(", " + self.item.secondary_pos.short_form)
+        sb.extend(["] "] + self.format_morpheme_string())
+        return ''.join(sb)
 
     def format_morpheme_string(self):
         surfaces = self.morpheme_data_list
-
-        sb = self.get_stem() + ":" + surfaces[0].morpheme.id_
+        sb = [f"{self.get_stem()}:{surfaces[0].morpheme.id_}"]
         if len(surfaces) > 1 and not surfaces[1].morpheme.derivational_:
-            sb += "+"
+            sb.append("+")
 
         for i in range(1, len(surfaces)):
             s = surfaces[i]
             morpheme = s.morpheme
             if morpheme.derivational_:
-                sb += "|"
+                sb.append("|")
             if len(s.surface) > 0:
-                sb += s.surface + ':'
+                sb.append(s.surface + ':')
             sb += s.morpheme.id_
             if s.morpheme.derivational_:
-                sb += '→'
+                sb.append('→')
             elif i < len(surfaces) - 1 and not surfaces[i+1].morpheme.derivational_:
-                sb += '+'
+                sb.append('+')
 
         return sb
 
@@ -113,7 +109,7 @@ class SingleAnalysis:
         return False
 
     def copy_for(self, item: DictionaryItem, stem: str) -> 'SingleAnalysis':
-        data: List['SingleAnalysis.MorphemeData'] = self.morpheme_data_list
+        data: List['SingleAnalysis.MorphemeData'] = self.morpheme_data_list.copy()
         data[0] = SingleAnalysis.MorphemeData(data[0].morpheme, stem)
         return SingleAnalysis(item, data, self.group_boundaries.copy())
 

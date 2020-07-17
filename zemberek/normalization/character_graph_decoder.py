@@ -3,7 +3,7 @@ from __future__ import annotations
 import struct
 
 from enum import Enum, auto
-from typing import List, Dict, Set, Union, TYPE_CHECKING
+from typing import Dict, Set, Tuple, TYPE_CHECKING
 from abc import ABC
 
 if TYPE_CHECKING:
@@ -15,15 +15,15 @@ from zemberek.core.turkish import TurkishAlphabet
 
 class CharacterGraphDecoder:
 
-    DIACRITICS_IGNORING_MATCHER: Union['CharacterGraphDecoder.DiacriticsIgnoringMatcher', None]
+    DIACRITICS_IGNORING_MATCHER: 'CharacterGraphDecoder.DiacriticsIgnoringMatcher'
 
     def __init__(self, graph: CharacterGraph):
         self.graph = graph
         self.max_penalty = 1.0
         self.check_near_key_substitution = False
 
-    def get_suggestions(self, input_: str, matcher: 'CharacterGraphDecoder.CharMatcher') -> List[str]:
-        return list(CharacterGraphDecoder.Decoder(matcher, self).decode(input_).keys())
+    def get_suggestions(self, input_: str, matcher: 'CharacterGraphDecoder.CharMatcher') -> Tuple[str]:
+        return tuple(CharacterGraphDecoder.Decoder(matcher, self).decode(input_).keys())
 
     class Decoder:
 
@@ -58,7 +58,7 @@ class CharacterGraphDecoder:
             if next_index < len(inp):
                 cc = None if self.matcher is None else self.matcher.matches(next_char)
                 if hypothesis.node.has_epsilon_connection():
-                    child_list: List[Node] = hypothesis.node.get_child_list(c=next_char) if cc is None else \
+                    child_list: Tuple[Node] = hypothesis.node.get_child_list(c=next_char) if cc is None else \
                         hypothesis.node.get_child_list(char_array=cc)
 
                     for child in child_list:
@@ -95,7 +95,7 @@ class CharacterGraphDecoder:
                     else hypothesis.node.get_immediate_child_node_iterable()
                 if next_index < len(inp):
                     for child in all_child_notes:
-                        penalty = 0.0
+                        # penalty = 0.0
                         if self.outer.check_near_key_substitution:
                             # IMPLEMENT IF NEEDED
                             raise NotImplementedError("Not implemented, implement if needed")
@@ -125,10 +125,10 @@ class CharacterGraphDecoder:
                     if len(inp) > 2 and next_index < len(inp) - 1:
                         transpose: str = inp[next_index + 1]
                         if self.matcher:
-                            tt: List[str] = self.matcher.matches(transpose)
-                            cc: List[str] = self.matcher.matches(next_char)
+                            tt: Tuple[str] = self.matcher.matches(transpose)
+                            cc: Tuple[str] = self.matcher.matches(next_char)
                             for t in tt:
-                                next_nodes: List[Node] = hypothesis.node.get_child_list(c=t)
+                                next_nodes: Tuple[Node] = hypothesis.node.get_child_list(c=t)
                                 for next_node in next_nodes:
                                     for c in cc:
                                         if hypothesis.node.has_child(t) and next_node.has_child(c):
@@ -144,7 +144,7 @@ class CharacterGraphDecoder:
                                                 else:
                                                     new_hypotheses.add(h)
                         else:
-                            next_nodes: List[Node] = hypothesis.node.get_child_list(c=transpose)
+                            next_nodes: Tuple[Node] = hypothesis.node.get_child_list(c=transpose)
                             for next_node in next_nodes:
                                 if hypothesis.node.has_child(transpose) and next_node.has_child(next_char):
                                     for n in next_node.get_child_list(c=next_char):
@@ -229,42 +229,42 @@ class CharacterGraphDecoder:
                     self.ending = node.word
 
     class CharMatcher(ABC):
-        def matches(self, var1: str) -> List[str]:
+        def matches(self, var1: str) -> Tuple[str, ...]:
             raise NotImplementedError
 
     class DiacriticsIgnoringMatcher(CharMatcher):
-        map_: Dict[int, List[str]] = {}
+        map_: Dict[int, Tuple[str, ...]] = {}
 
         def __init__(self):
             all_letters = TurkishAlphabet.INSTANCE.all_letters + "+.,'-"
 
             for c in all_letters:
-                self.map_[ord(c)] = [c]
+                self.map_[ord(c)] = (c,)
 
-            self.map_[99] = ['c', 'ç']
-            self.map_[103] = ['g', 'ğ']
-            self.map_[305] = ['ı', 'i']
-            self.map_[105] = ['ı', 'i']
-            self.map_[111] = ['o', 'ö']
-            self.map_[115] = ['s', 'ş']
-            self.map_[117] = ['u', 'ü']
-            self.map_[97] = ['a', 'â']
-            self.map_[105] = ['i', 'î']
-            self.map_[117] = ['u', 'û']
-            self.map_[67] = ['C', 'Ç']
-            self.map_[71] = ['G', 'Ğ']
-            self.map_[73] = ['I', 'İ']
-            self.map_[304] = ['İ', 'I']
-            self.map_[79] = ['O', 'Ö']
-            self.map_[214] = ['Ö', 'Ş']
-            self.map_[85] = ['U', 'Ü']
-            self.map_[65] = ['A', 'Â']
-            self.map_[304] = ['İ', 'Î']
-            self.map_[85] = ['U', 'Û']
+            self.map_[99] = (u'c', u'ç')
+            self.map_[103] = (u'g', u'ğ')
+            self.map_[305] = (u'ı', u'i')
+            self.map_[105] = (u'ı', u'i')
+            self.map_[111] = (u'o', u'ö')
+            self.map_[115] = (u's', u'ş')
+            self.map_[117] = (u'u', u'ü')
+            self.map_[97] = (u'a', u'â')
+            self.map_[105] = (u'i', u'î')
+            self.map_[117] = (u'u', u'û')
+            self.map_[67] = (u'C', u'Ç')
+            self.map_[71] = (u'G', u'Ğ')
+            self.map_[73] = (u'I', u'İ')
+            self.map_[304] = (u'İ', u'I')
+            self.map_[79] = (u'O', u'Ö')
+            self.map_[214] = (u'Ö', u'Ş')
+            self.map_[85] = (u'U', u'Ü')
+            self.map_[65] = (u'A', u'Â')
+            self.map_[304] = (u'İ', u'Î')
+            self.map_[85] = (u'U', u'Û')
 
-        def matches(self, c: str) -> List[str]:
+        def matches(self, c: str) -> Tuple[str, ...]:
             res = self.map_.get(ord(c))
-            return [c] if res is None else res
+            return (c,) if res is None else res
 
     class Operation(Enum):
         NO_ERROR = auto()

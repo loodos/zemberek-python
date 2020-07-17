@@ -85,14 +85,14 @@ class DictionaryItemIterator:
 
     Attributes
     ----------
-    dict_items : List[DictionaryItem]
-        list of DictionaryItem (words) to iterate over
+    dict_items : Tuple[DictionaryItem]
+        tuple of DictionaryItem (words) to iterate over
     index : int
         current item's position
 
     """
 
-    def __init__(self, dict_items: List[DictionaryItem]):
+    def __init__(self, dict_items: Tuple[DictionaryItem]):
         self.dict_items = dict_items
         self.index = 0
 
@@ -120,42 +120,26 @@ class RootLexicon:
     """
 
     def __init__(self, item_list: List[DictionaryItem]):
-        # self.item_list = item_list
         self.id_map: Dict[str, DictionaryItem] = dict()
         self.item_set: Set[DictionaryItem] = set()
         self.item_map: Dict[str, List[DictionaryItem]] = dict()
         for item in item_list:
             self.add_(item)
 
-        self.item_set_as_tuple: Tuple[DictionaryItem] = tuple(dict.fromkeys(item_list).keys())
-        assert len(self.item_set) == len(self.item_set_as_tuple)
-
-        del self.item_set
-
-        self.index = 0
-
     def __len__(self):
-        return len(self.item_set_as_tuple)
+        return len(self.item_set)
 
     def __iter__(self):
-        self.index = 0
-        return self
-
-    def __next__(self):
-        if self.index < len(self.item_set_as_tuple):
-            item = self.item_set_as_tuple[self.index]
-            self.index += 1
-            return item
-        raise StopIteration
+        return DictionaryItemIterator(tuple(self.item_set))
 
     def __contains__(self, item):
-        return item in self.item_set_as_tuple
+        return item in self.item_set
 
     def add_(self, item: DictionaryItem):
         if item in self.item_set:
             logger.warning("Duplicated item")
         elif item.id_ in self.id_map.keys():
-            logger.warning('Duplicated item. ID {}'.format(self.id_map.get(item.id_)))
+            logger.warning(f"Duplicated item. ID {self.id_map.get(item.id_)}")
         else:
             self.item_set.add(item)
             self.id_map[item.id_] = item
@@ -172,5 +156,5 @@ class RootLexicon:
         start = time.time()
         lexicon_path = resource_filename("zemberek", "resources/lexicon.csv")
         lexicon = DictionaryReader.load_from_resources(lexicon_path)
-        logger.info(f"Dictionary generated in {time.time() - start} seconds")
+        logger.debug(f"Dictionary generated in {time.time() - start} seconds")
         return lexicon

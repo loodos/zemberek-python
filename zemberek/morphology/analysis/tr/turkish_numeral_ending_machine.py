@@ -6,7 +6,7 @@ class TurkishNumeralEndingMachine:
 
     def __init__(self):
         self.ROOT = TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.ROOT)
-        self.states1 = [TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.SIFIR),
+        self.states1 = (TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.SIFIR),
                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.BIR),
                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.IKI),
                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.UC),
@@ -15,8 +15,8 @@ class TurkishNumeralEndingMachine:
                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.ALTI),
                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.YEDI),
                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.SEKIZ),
-                        TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.DOKUZ)]
-        self.states10 = [None, TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.ON),
+                        TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.DOKUZ))
+        self.states10 = (None, TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.ON),
                          TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.YIRMI),
                          TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.OTUZ),
                          TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.KIRK),
@@ -24,7 +24,7 @@ class TurkishNumeralEndingMachine:
                          TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.ALTMIS),
                          TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.YETMIS),
                          TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.SEKSEN),
-                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.DOKSAN)]
+                         TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.DOKSAN))
         self.SIFIR = TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.SIFIR)
         self.YUZ = TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.YUZ)
         self.BIN_1 = TurkishNumeralEndingMachine.State(TurkishNumeralEndingMachine.StateId.BIN)

@@ -68,15 +68,15 @@ class TurkishNumbers:
                 uclu = giris_pos % 1000
                 if uclu != 0:
                     if uclu == 1 and sayac == 1:
-                        result = TurkishNumbers.thousands[sayac] + " " + result
+                        result = f"{TurkishNumbers.thousands[sayac]} {result}"
                     else:
-                        result = TurkishNumbers.convert_three_digits(uclu) + " " + TurkishNumbers.thousands[sayac] + \
-                                 " " + result
+                        result = f"{TurkishNumbers.convert_three_digits(uclu)} {TurkishNumbers.thousands[sayac]}" \
+                                 f" {result}"
                 sayac += 1
                 giris_pos /= 1000
 
             if inp < 0:
-                return "eksi " + result.strip()
+                return f"eksi {result.strip()}"
             else:
                 return result.strip()
         else:
@@ -92,8 +92,7 @@ class TurkishNumbers:
             sonuc = "yüz"
 
         if hundreds > 1:
-            sonuc = TurkishNumbers.single_digit_numbers[hundreds] + " " + sonuc
+            sonuc = f"{TurkishNumbers.single_digit_numbers[hundreds]} {sonuc}"
 
-        sonuc = sonuc + " " + TurkishNumbers.ten_to_ninety[tens] + " " + \
-            TurkishNumbers.single_digit_numbers[single_digit]
+        sonuc = f"{sonuc} {TurkishNumbers.ten_to_ninety[tens]} {TurkishNumbers.single_digit_numbers[single_digit]}"
         return sonuc.strip()

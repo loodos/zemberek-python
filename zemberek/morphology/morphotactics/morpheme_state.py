@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from typing import List, Union, TYPE_CHECKING
+from typing import List, Union,Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .morpheme import Morpheme
@@ -77,20 +77,20 @@ class MorphemeState:
         for transition in state.outgoing:
             copy = transition.get_copy()
             copy.from_ = self
-            self.add_outgoing([transition])
+            self.add_outgoing((transition,))
 
-    def add_outgoing(self, suffix_transitions: List[MorphemeTransition]) -> 'MorphemeState':
+    def add_outgoing(self, suffix_transitions: Tuple[MorphemeTransition, ...]) -> 'MorphemeState':
         for suffix_transition in suffix_transitions:
             if suffix_transition in self.outgoing:
-                logger.info(f"Outgoing transition already exists{str(suffix_transition)}")
+                logger.debug(f"Outgoing transition already exists{str(suffix_transition)}")
 
             self.outgoing.append(suffix_transition)
         return self
 
-    def add_incoming(self, suffix_transitions: List[MorphemeTransition]) -> 'MorphemeState':
+    def add_incoming(self, suffix_transitions: Tuple[MorphemeTransition, ...]) -> 'MorphemeState':
         for suffix_transition in suffix_transitions:
             if suffix_transition in self.incoming:
-                logger.info(f"Incoming transition already exists{str(suffix_transition)}")
+                logger.debug(f"Incoming transition already exists{str(suffix_transition)}")
 
             self.incoming.append(suffix_transition)
         return self

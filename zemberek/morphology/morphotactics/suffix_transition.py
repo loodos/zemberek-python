@@ -59,13 +59,13 @@ class SuffixTransition(MorphemeTransition):
         st.from_ = self.from_
         st.to = self.to
         st.condition = self.condition
-        st.token_list = self.token_list
+        st.token_list = self.token_list.copy()
         st.surface_cache = self.surface_cache
         return st
 
     def connect(self):
-        self.from_.add_outgoing([self])
-        self.to.add_incoming([self])
+        self.from_.add_outgoing((self,))
+        self.to.add_incoming((self,))
 
     def count_conditions(self) -> int:
         if self.condition is None:
@@ -85,7 +85,7 @@ class SuffixTransition(MorphemeTransition):
             if lower.startswith("+") and TurkishAlphabet.INSTANCE.is_vowel(lower[2]) or first_char_vowel:
                 c = Conditions.not_have(p_attribute=PhoneticAttribute.ExpectsConsonant)
 
-            if c is not None:
+            if c:
                 if self.condition is None:
                     self.condition = c
                 else:

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import logging
 
-from typing import List, Dict, TYPE_CHECKING
+from copy import deepcopy
+from typing import List, Dict, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..morphotactics import TurkishMorphotactics
@@ -19,8 +20,8 @@ logger = logging.getLogger(__name__)
 class RuleBasedAnalyzer:
 
     def __init__(self, morphotactics: TurkishMorphotactics):
-        self.lexicon = morphotactics.lexicon
-        self.stem_transitions = morphotactics.stem_transitions
+        self.lexicon = morphotactics.get_root_lexicon()
+        self.stem_transitions = morphotactics.get_stem_transitions()
         self.morphotactics = morphotactics
         self.debug_mode = False
         self.ascii_tolerant = False
@@ -35,7 +36,7 @@ class RuleBasedAnalyzer:
         analyzer.ascii_tolerant = True
         return analyzer
 
-    def analyze(self, inp: str) -> List[SingleAnalysis]:
+    def analyze(self, inp: str) -> Tuple[SingleAnalysis, ...]:
         if self.debug_mode:
             raise NotImplementedError("Debug mode is not implemented")
 
@@ -50,16 +51,16 @@ class RuleBasedAnalyzer:
             tail = inp[length:]
             paths.append(SearchPath.initial_path(candidate, tail))
 
-        result_paths: List[SearchPath] = self.search(paths)
+        result_paths: Tuple[SearchPath] = self.search(paths)
         result: List[SingleAnalysis] = []
 
         for path in result_paths:
             analysis: SingleAnalysis = SingleAnalysis.from_search_path(path)
             result.append(analysis)
 
-        return result
+        return tuple(result)
 
-    def search(self, current_paths: List[SearchPath]) -> List[SearchPath]:
+    def search(self, current_paths: List[SearchPath]) -> Tuple[SearchPath, ...]:
         if len(current_paths) > 30:
             current_paths = self.prune_cyclic_paths(current_paths)
         result = []
@@ -80,7 +81,7 @@ class RuleBasedAnalyzer:
 
             current_paths = all_new_paths
 
-        return result
+        return tuple(result)
 
     def advance(self, path: SearchPath) -> List[SearchPath]:
         new_paths: List[SearchPath] = []
@@ -110,12 +111,12 @@ class RuleBasedAnalyzer:
                             tail_equals_surface = TurkishAlphabet.INSTANCE.equals_ignore_diacritics(path.tail, surface)\
                                 if self.ascii_tolerant else path.tail == surface
 
-                            attributes = path.phonetic_attributes.copy() if tail_equals_surface else \
+                            attributes = deepcopy(path.phonetic_attributes) if tail_equals_surface else \
                                 AttributesHelper.get_morphemic_attributes(surface, path.phonetic_attributes)
                             try:
                                 attributes.remove(PhoneticAttribute.CannotTerminate)
                             except KeyError:
-                                logger.info("There is no CannotTerminate element in the set")
+                                logger.debug("There is no CannotTerminate element in the set")
                             last_token = suffix_transition.get_last_template_token()
                             if last_token.type_ == SurfaceTransition.TemplateTokenType.LAST_VOICED:
                                 attributes.add(PhoneticAttribute.ExpectsConsonant)

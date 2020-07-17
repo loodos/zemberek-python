@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, TYPE_CHECKING
+from typing import List, Tuple, TYPE_CHECKING
 from abc import ABC
 
 if TYPE_CHECKING:
@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from ..lexicon import DictionaryItem
     from ..analysis.search_path import SearchPath
     from .morpheme import Morpheme
+    from .morpheme_state import MorphemeState
 
 from .operator import Operator
 
@@ -45,11 +46,11 @@ class Conditions(ABC):
         return Conditions.DictionaryItemIs(item).not_()
 
     @staticmethod
-    def root_is_any(items: List[DictionaryItem]) -> 'Conditions.Condition':
+    def root_is_any(items: Tuple[DictionaryItem, ...]) -> 'Conditions.Condition':
         return Conditions.DictionaryItemIsAny(items)
 
     @staticmethod
-    def root_is_none(items: List[DictionaryItem]) -> 'Conditions.Condition':
+    def root_is_none(items: Tuple[DictionaryItem, ...]) -> 'Conditions.Condition':
         return Conditions.DictionaryItemIsNone(items)
 
     @staticmethod
@@ -209,7 +210,7 @@ class Conditions(ABC):
         def __str__(self):
             if len(self.conditions) == 0:
                 return "[No-Condition]"
-            elif len(self.conditions) ==1:
+            elif len(self.conditions) == 1:
                 return str(self.conditions[0])
             else:
                 string = ""
@@ -223,8 +224,7 @@ class Conditions(ABC):
             return string
 
     class CurrentGroupContainsAny(AbstractCondition):
-        def __init__(self, states):  # states: List[MorphemeState]
-            super(Conditions.CurrentGroupContainsAny, self).__init__()
+        def __init__(self, states: Tuple[MorphemeState, ...]):  # states: Tuple[MorphemeState]
             self.states = set(states)
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -241,7 +241,7 @@ class Conditions(ABC):
             return "CurrentGroupContainsAny{" + str(self.states) + "}"
 
     class DictionaryItemIsAny(AbstractCondition):
-        def __init__(self, items: List[DictionaryItem]):
+        def __init__(self, items: Tuple[DictionaryItem, ...]):
             self.items = set(items)
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -275,7 +275,7 @@ class Conditions(ABC):
             return "LastDerivationIs{" + str(self.state) + "}"
 
     class LastDerivationIsAny(AbstractCondition):
-        def __init__(self, states):  # states: List[MorphemeState]
+        def __init__(self, states: Tuple[MorphemeState, ...]):  # states: Tuple[MorphemeState]
             self.states = set(states)
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -320,7 +320,7 @@ class Conditions(ABC):
             return "HasTail{}"
 
     class ContainsMorpheme(AbstractCondition):
-        def __init__(self, morphemes: List[Morpheme]):
+        def __init__(self, morphemes: Tuple[Morpheme, ...]):
             self.morphemes = set(morphemes)
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -356,7 +356,7 @@ class Conditions(ABC):
             return "PreviousStateIsNot{" + str(self.state) + "}"
 
     class PreviousStateIsAny(AbstractCondition):
-        def __init__(self, states):  # state: MorphemeState
+        def __init__(self, states: Tuple[MorphemeState, ...]):  # state: MorphemeState
             self.states = set(states)
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -377,7 +377,7 @@ class Conditions(ABC):
             return "RootSurfaceIs§{" + self.surface + "}"
 
     class RootSurfaceIsAny(AbstractCondition):
-        def __init__(self, surfaces: List[str]):
+        def __init__(self, surfaces: Tuple[str, ...]):
             self.surfaces = surfaces
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -390,7 +390,7 @@ class Conditions(ABC):
             return "RootSurfaceIsAny{" + str(self.surfaces) + "}"
 
     class PreviousMorphemeIsAny(AbstractCondition):
-        def __init__(self, morphemes: List[Morpheme]):
+        def __init__(self, morphemes: Tuple[Morpheme, ...]):
             self.morphemes = morphemes
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -401,7 +401,7 @@ class Conditions(ABC):
             return "PreviousMorphemeIsAny{" + str(self.morphemes) + "}"
 
     class PreviousGroupContains(AbstractCondition):
-        def __init__(self, states):  # state: MorphemeState
+        def __init__(self, states: Tuple[MorphemeState, ...]):  # state: MorphemeState
             self.states = states
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -425,7 +425,6 @@ class Conditions(ABC):
 
             return False
 
-
         def __str__(self):
             return "PreviousGroupContains{" + str(self.states) + "}"
 
@@ -440,7 +439,7 @@ class Conditions(ABC):
             return "DictionaryItemIs{" + str(self.item) + "}"
 
     class DictionaryItemIsNone(AbstractCondition):
-        def __init__(self, items: List[DictionaryItem]):
+        def __init__(self, items: Tuple[DictionaryItem, ...]):
             self.items = items
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -450,7 +449,7 @@ class Conditions(ABC):
             return "DictionaryItemIsNone{" + str(self.items) + "}"
 
     class HasTailSequence(AbstractCondition):
-        def __init__(self, morphemes: List[Morpheme]):
+        def __init__(self, morphemes: Tuple[Morpheme, ...]):
             self.morphemes = morphemes
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -473,7 +472,7 @@ class Conditions(ABC):
             return "HasTailSequence{" + str(self.morphemes) + "}"
 
     class ContainsMorphemeSequence(AbstractCondition):
-        def __init__(self, morphemes: List[Morpheme]):
+        def __init__(self, morphemes: Tuple[Morpheme, ...]):
             self.morphemes = morphemes
 
         def accept_(self, visitor: SearchPath) -> bool:
@@ -495,7 +494,7 @@ class Conditions(ABC):
             return "ContainsMorphemeSequence{" + str(self.morphemes) + "}"
 
     class PreviousGroupContainsMorpheme(AbstractCondition):
-        def __init__(self, morphemes: List[Morpheme]):
+        def __init__(self, morphemes: Tuple[Morpheme, ...]):
             self.morphemes = morphemes
 
         def accept_(self, visitor: SearchPath) -> bool:

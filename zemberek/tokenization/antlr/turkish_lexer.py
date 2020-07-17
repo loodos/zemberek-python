@@ -30,7 +30,7 @@ class TurkishLexer(Lexer):
                     abbreviations.add(abbr)
                     abbreviations.add(abbr.lower())
                     abbreviations.add(abbr.translate(TurkishAlphabet.lower_map).lower())
-
+    del f
     _decision_to_DFA: List[DFA]
     _shared_context_cache = PredictionContextCache()
 

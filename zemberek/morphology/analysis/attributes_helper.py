@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Set
 
 from zemberek.core.turkish import TurkishAlphabet, PhoneticAttribute
@@ -6,8 +7,8 @@ from zemberek.core.turkish import TurkishAlphabet, PhoneticAttribute
 class AttributesHelper:
 
     alphabet = TurkishAlphabet.INSTANCE
-    NO_VOWEL_ATTRIBUTES = [PhoneticAttribute.LastLetterConsonant, PhoneticAttribute.FirstLetterConsonant,
-                           PhoneticAttribute.HasNoVowel]
+    NO_VOWEL_ATTRIBUTES = (PhoneticAttribute.LastLetterConsonant, PhoneticAttribute.FirstLetterConsonant,
+                           PhoneticAttribute.HasNoVowel)
 
     @classmethod
     def get_morphemic_attributes(cls, seq: str, predecessor_attrs: Set[PhoneticAttribute] = None) -> \
@@ -16,8 +17,8 @@ class AttributesHelper:
         if predecessor_attrs is None:
             predecessor_attrs = set()
 
-        if len(seq) == 0:
-            return predecessor_attrs.copy()
+        if not seq:
+            return deepcopy(predecessor_attrs)
         else:
             attrs = set()
             if cls.alphabet.contains_vowel(seq):
@@ -43,10 +44,14 @@ class AttributesHelper:
                 else:
                     attrs.add(PhoneticAttribute.FirstLetterConsonant)
             else:
-                attrs = predecessor_attrs.copy()
+                attrs = deepcopy(predecessor_attrs)
                 attrs.update(cls.NO_VOWEL_ATTRIBUTES)
                 try:
                     attrs.remove(PhoneticAttribute.LastLetterVowel)
+                except KeyError:
+                    pass
+
+                try:
                     attrs.remove(PhoneticAttribute.ExpectsConsonant)
                 except KeyError:
                     pass

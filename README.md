@@ -9,3 +9,11 @@ _pip install git+ssh://git@gitlab.com/loodos/inhouse/marvin/lds-marvin-zemberek-
 * numpy==1.18.2
 
 Example usages can be found in examples.py
+
+There are some minor changes in codes where original contains some Java specific
+functionality and data structures. For data structures we used Python 
+equivalents as much as we could but sometimes we needed to change them. And it
+affects the performance and accuracy a bit.
+
+Many optimization can be made, further versions will be 
+released mostly on optimization.

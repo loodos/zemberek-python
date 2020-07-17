@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import deepcopy
 from typing import List, Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -43,7 +44,7 @@ class SearchPath:
     def get_copy_for_generation(self, surface_node: SurfaceTransition, phonetic_attributes: Set[PhoneticAttribute]) -> \
             'SearchPath':
         is_terminal = surface_node.get_state().terminal_
-        hist: List[SurfaceTransition] = self.transitions
+        hist: List[SurfaceTransition] = self.transitions.copy()
         hist.append(surface_node)
         path = SearchPath(self.tail, surface_node.get_state(), hist, phonetic_attributes, is_terminal)
         path.contains_suffix_with_surface = self.contains_suffix_with_surface or len(surface_node.surface) != 0
@@ -64,10 +65,10 @@ class SearchPath:
         morphemes: List[SurfaceTransition] = []
         root = SurfaceTransition(stem_transition.surface, stem_transition)
         morphemes.append(root)
-        return SearchPath(tail, stem_transition.to, morphemes, stem_transition.phonetic_attributes.copy(),
+        return SearchPath(tail, stem_transition.to, morphemes, deepcopy(stem_transition.phonetic_attributes),
                           stem_transition.to.terminal_)
 
     def __str__(self):
         st = self.get_stem_transition()
-        morpheme_str = " + ".join([str(s) for s in self.transitions])
+        morpheme_str = " + ".join(str(s) for s in self.transitions)
         return "[(" + st.item.id_ + ")(-" + self.tail + ") " + morpheme_str + "]"

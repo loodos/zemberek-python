@@ -10,6 +10,9 @@ class Token:
         self.end = end
         self.normalized = self.content if normalized is None else normalized
 
+    def __str__(self):
+        return f"[{self.content} {self.type_} {self.start}-{self.end}]"
+
     class Type(Enum):
         SpaceTab = auto()
         NewLine = auto()

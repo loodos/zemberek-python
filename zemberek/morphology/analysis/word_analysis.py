@@ -1,13 +1,26 @@
-from typing import List, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .single_analysis import SingleAnalysis
 
 
+class SingleAnalysisIterator:
+    def __init__(self, analysis_results: Tuple['SingleAnalysis', ...]):
+        self.analysis_results = analysis_results
+        self.index = 0
+
+    def __next__(self):
+        if self.index < len(self.analysis_results):
+            result = self.analysis_results[self.index]
+            self.index += 1
+            return result
+        raise StopIteration
+
+
 class WordAnalysis:
     EMPTY_INPUT_RESULT: 'WordAnalysis' = None
 
-    def __init__(self, inp: str, analysis_results: List['SingleAnalysis'], normalized_input: str = None):
+    def __init__(self, inp: str, analysis_results: Tuple['SingleAnalysis', ...], normalized_input: str = None):
         self.inp = inp
         self.analysis_results = analysis_results
         self.normalized_input = self.inp if normalized_input is None else normalized_input
@@ -40,15 +53,7 @@ class WordAnalysis:
                ", analysisResults=" + ' '.join([str(a) for a in self.analysis_results]) + '}'
 
     def __iter__(self):
-        self.index = 0
-        return self
-
-    def __next__(self):
-        if self.index < len(self.analysis_results):
-            result = self.analysis_results[self.index]
-            self.index += 1
-            return result
-        raise StopIteration
+        return SingleAnalysisIterator(self.analysis_results)
 
 
-WordAnalysis.EMPTY_INPUT_RESULT = WordAnalysis("", [])
+WordAnalysis.EMPTY_INPUT_RESULT = WordAnalysis("", ())

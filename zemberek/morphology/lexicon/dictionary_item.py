@@ -1,4 +1,4 @@
-from typing import Set, Union
+from typing import Set
 
 from zemberek.core.turkish import RootAttribute, PrimaryPos, SecondaryPos
 
@@ -35,7 +35,7 @@ class DictionaryItem:
     says(sound=None)
         Prints the animals name and what sound it makes
     """
-    UNKNOWN: Union['DictionaryItem', None] = None
+    UNKNOWN: 'DictionaryItem'
 
     def __init__(self, lemma: str, root: str, primary_pos: PrimaryPos,
                  secondary_pos: SecondaryPos,  attributes: Set[RootAttribute] = None,
@@ -82,12 +82,12 @@ class DictionaryItem:
         :param index: index of the word
         :return: generated string id
         """
-        item_id = lemma + '_' + pos.short_form
+        item_id = f"{lemma}_{pos.short_form}"
 
         if spos and spos != SecondaryPos.None_:
-            item_id = item_id + '_' + spos.short_form
+            item_id = f"{item_id}_{spos.short_form}"
         if index > 0:
-            item_id = item_id + '_' + str(index)
+            item_id = f"{item_id}_{str(index)}"
         return item_id
 
     def has_attribute(self, attribute: RootAttribute) -> bool:
@@ -104,13 +104,13 @@ class DictionaryItem:
     def __str__(self):
         # return self.lemma + self.root + self.id
         string = self.lemma + " [P:" + self.primary_pos.short_form
-        if self.secondary_pos is not None and self.secondary_pos != SecondaryPos.None_:
+        if self.secondary_pos and self.secondary_pos != SecondaryPos.None_:
             string += ", " + self.secondary_pos.short_form
 
         if self.attributes and len(self.attributes) == 0:
             string += "]"
         else:
-            self.print_attributes(string, self.attributes)
+            string = self.print_attributes(string, self.attributes)
 
         return string
 
@@ -118,7 +118,7 @@ class DictionaryItem:
         return self.lemma[0: len(self.lemma) - 3] if self.primary_pos == PrimaryPos.Verb else self.lemma
 
     @staticmethod
-    def print_attributes(string: str, attrs: Set[RootAttribute]):
+    def print_attributes(string: str, attrs: Set[RootAttribute]) -> str:
         if attrs and len(attrs) > 0:
             string += "; A:"
             i = 0
@@ -128,6 +128,7 @@ class DictionaryItem:
                     string += ", "
                 i += 1
             string += "]"
+        return string
 
     def is_unknown(self) -> bool:
         return self == DictionaryItem.UNKNOWN

@@ -3,7 +3,8 @@ from __future__ import annotations
 import time
 import logging
 
-from typing import List, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
+from functools import lru_cache
 
 if TYPE_CHECKING:
     from ..tokenization.token import Token
@@ -23,18 +24,6 @@ logger = logging.getLogger(__name__)
 
 
 class TurkishMorphology:
-    """
-    private RootLexicon lexicon;
-    private RuleBasedAnalyzer analyzer;
-    private WordGenerator wordGenerator;
-    private UnidentifiedTokenAnalyzer unidentifiedTokenAnalyzer;
-    private TurkishTokenizer tokenizer;
-    private AnalysisCache cache;
-    private TurkishMorphotactics morphotactics;
-    private AmbiguityResolver ambiguityResolver;
-    private boolean useUnidentifiedTokenAnalyzer;
-    private boolean useCache;
-    """
 
     def __init__(self, builder: 'TurkishMorphology.Builder'):
         self.lexicon = builder.lexicon
@@ -46,9 +35,7 @@ class TurkishMorphology:
         self.tokenizer = builder.tokenizer
         self.word_generator = WordGenerator(self.morphotactics)
 
-        self.use_cache = builder.use_dynamic_cache
         self.use_unidentified_token_analyzer = builder.use_unidentifiedTokenAnalyzer
-        # DEVAM EDEBILIR
 
     @staticmethod
     def builder(lexicon: RootLexicon) -> 'TurkishMorphology.Builder':
@@ -61,11 +48,9 @@ class TurkishMorphology:
         logger.info(f"Initialized in {time.time() - start_time}")
         return instance
 
+    @lru_cache(maxsize=200)
     def analyze(self, word: str) -> WordAnalysis:
-        return self.analyze_with_cache(word) if self.use_cache else self.analyze_without_cache(word=word)
-
-    def analyze_with_cache(self, word: str) -> WordAnalysis:
-        raise NotImplementedError('Cache is not implemented yet, make use_cache False')
+        return self.analyze_without_cache(word=word)
 
     @staticmethod
     def normalize_for_analysis(word: str) -> str:
@@ -79,8 +64,8 @@ class TurkishMorphology:
 
     def analyze_without_cache(self, word: str = None, token: Token = None) -> WordAnalysis:
         if word:
-            tokens: List[Token] = self.tokenizer.tokenize(word)
-            return WordAnalysis(word, [], normalized_input=word) if len(tokens) != 1 else \
+            tokens: Tuple[Token] = self.tokenizer.tokenize(word)
+            return WordAnalysis(word, (), normalized_input=word) if len(tokens) != 1 else \
                 self.analyze_without_cache(token=tokens[0])
         else:  # token is not None
             word = token.content  # equal to token.getText()
@@ -98,36 +83,24 @@ class TurkishMorphology:
                     result = self.unidentified_token_analyzer.analyze(token)
 
                 if len(result) == 1 and result[0].item.is_unknown():
-                    result = []
+                    result = ()
 
                 return WordAnalysis(word, normalized_input=s, analysis_results=result)
 
-    def analyze_words_with_apostrophe(self, word: str) -> List[SingleAnalysis]:
+    def analyze_words_with_apostrophe(self, word: str) -> Tuple[SingleAnalysis, ...]:
         index = word.find(chr(39))
         if index > 0 and index != len(word) - 1:
             se = StemAndEnding(word[0:index], word[index + 1:])
             stem = TurkishAlphabet.INSTANCE.normalize(se.stem)
             without_quote = word.replace("'", "")
             no_quotes_parses = self.analyzer.analyze(without_quote)
-            return [] if len(no_quotes_parses) == 0 else \
-                [p for p in no_quotes_parses if p.item.primary_pos == PrimaryPos.Noun and
-                 (p.contains_morpheme(TurkishMorphotactics.p3sg) or p.get_stem() == stem)]
+            return () if len(no_quotes_parses) == 0 else \
+                tuple(p for p in no_quotes_parses if p.item.primary_pos == PrimaryPos.Noun and
+                      (p.contains_morpheme(TurkishMorphotactics.p3sg) or p.get_stem() == stem))
         else:
-            return []
+            return ()
 
     class Builder:
-        """
-        RootLexicon lexicon = new RootLexicon();
-        boolean useDynamicCache = true;
-        boolean useUnidentifiedTokenAnalyzer = true;
-        AnalysisCache cache;
-        AmbiguityResolver ambiguityResolver;
-        TurkishTokenizer tokenizer;
-        boolean informalAnalysis;
-        boolean ignoreDiacriticsInAnalysis;
-        """
-
-        use_dynamic_cache = False  # THIS CAN BE CONVERTED TO TRUE IF CACHE IS TO BE IMPLEMENTED
         use_unidentifiedTokenAnalyzer = True
 
         def __init__(self, lexicon: RootLexicon):
@@ -150,4 +123,3 @@ class TurkishMorphology:
 
         def build(self) -> 'TurkishMorphology':
             return TurkishMorphology(self)
-

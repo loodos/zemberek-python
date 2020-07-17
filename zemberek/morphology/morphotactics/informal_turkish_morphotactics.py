@@ -17,30 +17,23 @@ class InformalTurkishMorphotactics(TurkishMorphotactics):
         super().__init__(lexicon)
         self.lexicon = lexicon
 
-        self.a1plInformal = super().add_to_morpheme_map(
-            Morpheme.builder("A1pl_Informal", "A1pl_Informal")
-                .informal_().mapped_morpheme_(self.a1pl).build())
+        self.a1plInformal = self.add_to_morpheme_map(
+            Morpheme.builder("A1pl_Informal", "A1pl_Informal").informal_().mapped_morpheme_(self.a1pl).build())
         self.a1sgInformal = self.add_to_morpheme_map(
-            Morpheme.builder("A1sg_Informal", "A1sg_Informal")
-                .informal_().mapped_morpheme_(self.a1sg).build());
+            Morpheme.builder("A1sg_Informal", "A1sg_Informal").informal_().mapped_morpheme_(self.a1sg).build())
         self.prog1Informal = self.add_to_morpheme_map(
-            Morpheme.builder("Prog1_Informal", "Prog1_Informal")
-                .informal_().mapped_morpheme_(self.prog1).build())
+            Morpheme.builder("Prog1_Informal", "Prog1_Informal").informal_().mapped_morpheme_(self.prog1).build())
         self.futInformal = self.add_to_morpheme_map(
-            Morpheme.builder("Fut_Informal", "Fut_Informal")
-                .informal_().mapped_morpheme_(self.fut).build())
+            Morpheme.builder("Fut_Informal", "Fut_Informal").informal_().mapped_morpheme_(self.fut).build())
         self.quesSuffixInformal = self.add_to_morpheme_map(
-            Morpheme.builder("QuesSuffix_Informal", "QuesSuffix_Informal")
-                .informal_().mapped_morpheme_(self.ques).build())
+            Morpheme.builder("QuesSuffix_Informal", "QuesSuffix_Informal").informal_().mapped_morpheme_(
+                self.ques).build())
         self.negInformal = self.add_to_morpheme_map(
-            Morpheme.builder("Neg_Informal", "Neg_Informal")
-                .informal_().mapped_morpheme_(self.neg).build())
+            Morpheme.builder("Neg_Informal", "Neg_Informal").informal_().mapped_morpheme_(self.neg).build())
         self.unableInformal = self.add_to_morpheme_map(
-            Morpheme.builder("Unable_Informal", "Unable_Informal")
-                .informal_().mapped_morpheme_(self.unable).build())
+            Morpheme.builder("Unable_Informal", "Unable_Informal").informal_().mapped_morpheme_(self.unable).build())
         self.optInformal = self.add_to_morpheme_map(
-            Morpheme.builder("Opt_Informal", "Opt_Informal")
-                .informal_().mapped_morpheme_(self.opt).build())
+            Morpheme.builder("Opt_Informal", "Opt_Informal").informal_().mapped_morpheme_(self.opt).build())
 
         self.vA1pl_ST_Inf = MorphemeState.terminal("vA1pl_ST_Inf", self.a1plInformal)
         self.vA1sg_ST_Inf = MorphemeState.terminal("vA1sg_ST_Inf", self.a1sgInformal)
@@ -55,12 +48,13 @@ class InformalTurkishMorphotactics(TurkishMorphotactics):
         self.vOpt_S_Empty_Inf = MorphemeState.non_terminal("vOpt_S_Empty_Inf", self.optInformal)
         self.vOpt_S_Empty_Inf2 = MorphemeState.non_terminal("vOpt_S_Empty_Inf2", self.optInformal)
 
-        self.make_graph()
+        # self.make_graph()
         self.add_graph()
-        self.stem_transitions = StemTransitionsMapBased(lexicon, self)
+        # self.stem_transitions = StemTransitionsMapBased(lexicon, self)
 
     def add_graph(self):
-        self.verbRoot_S.add_(self.vProgYor_S_Inf, "Iyo", Conditions.not_have(p_attribute=PhoneticAttribute.LastLetterVowel))
+        self.verbRoot_S.add_(self.vProgYor_S_Inf, "Iyo",
+                             Conditions.not_have(p_attribute=PhoneticAttribute.LastLetterVowel))
         self.verbRoot_VowelDrop_S.add_(self.vProgYor_S_Inf, "Iyo")
         self.vProgYor_S_Inf.add_(self.vA1sg_ST, "m").add_(self.vA2sg_ST, "sun").add_(self.vA2sg_ST, "n").add_empty(
             self.vA3sg_ST).add_(self.vA1pl_ST, "z").add_(self.vA2pl_ST, "sunuz").add_(self.vA2pl_ST, "nuz").add_(
@@ -68,7 +62,7 @@ class InformalTurkishMorphotactics(TurkishMorphotactics):
             self.vNarrAfterTense_S, "muş").add_(self.vCopBeforeA3pl_S, "dur").add_(self.vWhile_S, "ken")
         self.vNegProg1_S.add_(self.vProgYor_S_Inf, "Iyo")
         self.vUnableProg1_S.add_(self.vProgYor_S_Inf, "Iyo")
-        diYiCondition: Conditions.RootSurfaceIsAny = Conditions.RootSurfaceIsAny(["di", "yi"])
+        diYiCondition: Conditions.RootSurfaceIsAny = Conditions.RootSurfaceIsAny(("di", "yi"))
         self.vDeYeRoot_S.add_(self.vProgYor_S_Inf, "yo", diYiCondition)
         self.vOpt_S.add_(self.vA1pl_ST_Inf, "k")
         self.verbRoot_S.add_(self.vNeg_S_Inf, "mI")

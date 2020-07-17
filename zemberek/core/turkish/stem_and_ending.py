@@ -1,7 +1,9 @@
 
 
 class StemAndEnding:
-
+    """
+    A class to represent a word split as stem and ending. It the word is a stem, ending is empty string
+    """
     def __init__(self, stem: str, ending: str):
 
         if not self.has_text(ending):

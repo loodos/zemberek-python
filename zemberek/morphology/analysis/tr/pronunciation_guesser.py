@@ -38,45 +38,45 @@ class PronunciationGuesser:
         if self.alphabet.contains_digit(w):
             return self.to_turkish_letter_pronunciation_with_digit(w)
         else:
-            sb = ""
+            sb = []
 
             for i, c in enumerate(w):
                 if c != '-':
                     if c in self.turkish_letter_prons.keys():
                         if i == len(w) - 1 and c == "k":
-                            sb += "ka"
+                            sb.append("ka")
                         else:
-                            sb += self.turkish_letter_prons.get(c)
+                            sb.append(self.turkish_letter_prons.get(c))
                     else:
                         logger.debug("Cannot guess pronunciation of letter [" + c + "] in :[" + w + "]")
-            return sb
+            return ''.join(sb)
 
     def to_turkish_letter_pronunciation_with_digit(self, w: str) -> str:
         pieces: List[str] = TurkishNumbers.separate_numbers(w)
-        sb = ""
+        sb = []
 
         for i, piece in enumerate(pieces):
             if self.alphabet.contains_digit(piece):
-                sb += TurkishNumbers.convert_number_to_string(piece)
+                sb.append(TurkishNumbers.convert_number_to_string(piece))
             else:
                 if i < len(pieces) - 1:
-                    sb += self.to_turkish_letter_pronunciations(piece)
+                    sb.append(self.to_turkish_letter_pronunciations(piece))
                 else:
-                    sb += self.replace_english_specific_chars(piece)
-        return re.sub("[ ]+", "", sb)
+                    sb.append(self.replace_english_specific_chars(piece))
+        return re.sub("[ ]+", "", ''.join(sb))
 
     @staticmethod
     def replace_english_specific_chars(w: str) -> str:
-        sb = ""
+        sb = []
         for c in w:
             if c == '\'' or c == '-':
                 continue
             elif c == 'q':
-                sb += "k"
+                sb.append("k")
             elif c == 'w':
-                sb += "v"
+                sb.append("v")
             elif c == 'x':
-                sb += "ks"
+                sb.append("ks")
             else:
-                sb += c
-        return sb
+                sb.append(c)
+        return ''.join(sb)
