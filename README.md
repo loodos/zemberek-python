@@ -28,6 +28,7 @@ You can install the package with pip
 
     pip install zemberek
 
+
 ##Examples
 Example usages can be found in [examples.py](zemberek/examples.py)
 
