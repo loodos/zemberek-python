@@ -1,4 +1,4 @@
-    *** Version 0.0.1   ***
+        *** Version 0.0.1   ***
 2020-07-10 14:44:57,435 - zemberek.morphology.turkish_morphology - INFO
 Msg: Initialized in 7.922625780105591
 
@@ -63,7 +63,7 @@ Mutlu olma sanatının özü bu değildir.
 Gerçek mutluluk, kişinin her türlü olaya ve duruma karşı kendini pozitif tutarak mutlu hissedebilmesi halidir.
 Bu davranış şeklini edinen insan, zor günlerde güçlü, mutlu günlerde zevk alan biri olur ve mutluluğu kalıcı kılar.
 
-    *** Version 0.1.0   ***
+        *** Version 0.1.0   ***
 
 2020-07-18 00:38:42,509 - zemberek.morphology.turkish_morphology - INFO
 Msg: Initialized in 9.12086796760559

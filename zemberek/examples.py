@@ -21,11 +21,11 @@ examples = ["Yrn okua gidicem",
             "Kredi başvrusu yapmk istiyrum.",
             "Bankanizin hesp blgilerini ogrenmek istyorum."]
 
-mor = TurkishMorphology.create_with_defaults()
+morphology = TurkishMorphology.create_with_defaults()
 
 # SENTENCE NORMALIZATION
 start = time.time()
-normalizer = TurkishSentenceNormalizer(mor)
+normalizer = TurkishSentenceNormalizer(morphology)
 logger.info(f"Normalization instance created in: {time.time() - start} s")
 
 start = time.time()
@@ -35,7 +35,7 @@ for example in examples:
 logger.info(f"Sentences normalized in: {time.time() - start} s")
 
 start = time.time()
-sc = TurkishSpellChecker(mor)
+sc = TurkishSpellChecker(morphology)
 logger.info(f"Spell checker instance created in: {time.time() - start} s")
 
 
@@ -69,10 +69,10 @@ for sentence in sentences:
 
 
 # SINGLE WORD MORPHOLOGICAL ANALYSIS
-results = mor.analyze("kalemin")
+results = morphology.analyze("kalemin")
 for result in results:
     print(result)
-
+print("\n")
 
 # TOKENIZATION
 tokenizer = TurkishTokenizer.DEFAULT
