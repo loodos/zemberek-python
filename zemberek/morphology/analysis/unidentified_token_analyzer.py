@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 from zemberek.core.turkish import PrimaryPos, SecondaryPos, TurkishAlphabet, StemAndEnding, RootAttribute, Turkish
 from zemberek.tokenization.token import Token
-from ..lexicon import DictionaryItem
-from .tr import TurkishNumbers, TurkishNumeralEndingMachine, PronunciationGuesser
-from .single_analysis import SingleAnalysis
+from zemberek.morphology.lexicon import DictionaryItem
+from zemberek.morphology.analysis.tr import TurkishNumbers, TurkishNumeralEndingMachine, PronunciationGuesser
+from zemberek.morphology.analysis.single_analysis import SingleAnalysis
 
 
 class UnidentifiedTokenAnalyzer:

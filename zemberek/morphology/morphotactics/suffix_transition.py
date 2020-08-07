@@ -2,14 +2,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Set
 
 if TYPE_CHECKING:
-    from ..analysis.search_path import SearchPath
-    from .morpheme_state import MorphemeState
+    from zemberek.morphology.analysis.search_path import SearchPath
+    from zemberek.morphology.morphotactics.morpheme_state import MorphemeState
 
 from zemberek.core.turkish import TurkishAlphabet, PhoneticAttribute
-from ..analysis.surface_transitions import SurfaceTransition
-from .conditions import Conditions
-from .attribute_to_surface_cache import AttributeToSurfaceCache
-from .morpheme_transition import MorphemeTransition
+from zemberek.morphology.analysis.surface_transitions import SurfaceTransition
+from zemberek.morphology.morphotactics.conditions import Conditions
+from zemberek.morphology.morphotactics.attribute_to_surface_cache import AttributeToSurfaceCache
+from zemberek.morphology.morphotactics.morpheme_transition import MorphemeTransition
 
 
 class SuffixTransition(MorphemeTransition):

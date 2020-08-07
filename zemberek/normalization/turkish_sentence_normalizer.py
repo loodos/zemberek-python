@@ -11,10 +11,10 @@ from zemberek.morphology.analysis.informal_analysis_converter import InformalAna
 from zemberek.morphology.generator import WordGenerator
 from zemberek.tokenization.turkish_tokenizer import TurkishTokenizer
 from zemberek.tokenization.token import Token
-from .stem_ending_graph import StemEndingGraph
-from .character_graph_decoder import CharacterGraphDecoder
-from .turkish_spell_checker import TurkishSpellChecker
-from .deasciifier.deasciifier import Deasciifier
+from zemberek.normalization.stem_ending_graph import StemEndingGraph
+from zemberek.normalization.character_graph_decoder import CharacterGraphDecoder
+from zemberek.normalization.turkish_spell_checker import TurkishSpellChecker
+from zemberek.normalization.deasciifier.deasciifier import Deasciifier
 
 
 def load_replacements() -> Dict[str, str]:

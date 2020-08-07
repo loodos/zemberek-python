@@ -6,7 +6,7 @@ from typing import List, Dict, Set, Tuple
 from logging import Logger
 
 from zemberek.core.turkish import RootAttribute, SecondaryPos, PrimaryPos
-from .dictionary_item import DictionaryItem
+from zemberek.morphology.lexicon.dictionary_item import DictionaryItem
 
 logger = Logger("logger")
 

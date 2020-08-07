@@ -3,11 +3,11 @@ from copy import deepcopy
 from typing import List, Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..morphotactics.morpheme_state import MorphemeState
-    from ..morphotactics.stem_transition import StemTransition
+    from zemberek.morphology.morphotactics.morpheme_state import MorphemeState
+    from zemberek.morphology.morphotactics.stem_transition import StemTransition
 
 from zemberek.core.turkish import PhoneticAttribute
-from .surface_transitions import SurfaceTransition
+from zemberek.morphology.analysis.surface_transitions import SurfaceTransition
 
 
 class SearchPath:

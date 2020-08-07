@@ -1,6 +1,6 @@
 from typing import Union
 
-from .turkish_alphabet import TurkishAlphabet
+from zemberek.core.turkish.turkish_alphabet import TurkishAlphabet
 
 
 class TurkishSyllableExtractor:

@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 from zemberek.core.turkish import PrimaryPos, SecondaryPos, RootAttribute, TurkishAlphabet, Turkish
-from .single_analysis import SingleAnalysis
+from zemberek.morphology.analysis.single_analysis import SingleAnalysis
 
 
 class WordAnalysisSurfaceFormatter:

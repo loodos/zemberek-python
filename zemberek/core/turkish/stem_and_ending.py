@@ -1,5 +1,3 @@
-
-
 class StemAndEnding:
     """
     A class to represent a word split as stem and ending. It the word is a stem, ending is empty string

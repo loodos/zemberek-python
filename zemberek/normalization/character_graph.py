@@ -1,7 +1,7 @@
 from typing import Set
 from threading import Lock
 
-from .node import Node
+from zemberek.normalization.node import Node
 
 
 class AtomicCounter:

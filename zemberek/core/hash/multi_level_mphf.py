@@ -3,7 +3,7 @@ import numpy as np
 from typing import List, BinaryIO, Tuple
 from struct import unpack
 
-from .mphf import Mphf
+from zemberek.core.hash.mphf import Mphf
 
 
 class MultiLevelMphf(Mphf):

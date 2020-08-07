@@ -5,7 +5,7 @@ from pkg_resources import resource_filename
 from typing import Dict, List
 
 from zemberek.core.turkish import TurkishSyllableExtractor, TurkishAlphabet
-from .turkish_numbers import TurkishNumbers
+from zemberek.morphology.analysis.tr.turkish_numbers import TurkishNumbers
 
 logger = logging.getLogger(__name__)
 

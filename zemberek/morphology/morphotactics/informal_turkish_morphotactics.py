@@ -2,13 +2,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..lexicon import RootLexicon
+    from zemberek.morphology.lexicon import RootLexicon
 
 from zemberek.core.turkish import PhoneticAttribute
-from .morpheme import Morpheme
-from .morpheme_state import MorphemeState
-from .turkish_morphotactics import TurkishMorphotactics, StemTransitionsMapBased
-from .conditions import Conditions
+from zemberek.morphology.morphotactics.morpheme import Morpheme
+from zemberek.morphology.morphotactics.morpheme_state import MorphemeState
+from zemberek.morphology.morphotactics.turkish_morphotactics import TurkishMorphotactics, StemTransitionsMapBased
+from zemberek.morphology.morphotactics.conditions import Conditions
 
 
 class InformalTurkishMorphotactics(TurkishMorphotactics):

@@ -6,13 +6,13 @@ from copy import deepcopy
 from typing import List, Dict, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..morphotactics import TurkishMorphotactics
+    from zemberek.morphology.morphotactics import TurkishMorphotactics
 
 from zemberek.core.turkish import PhoneticAttribute, TurkishAlphabet
-from .surface_transitions import SurfaceTransition
-from .single_analysis import SingleAnalysis
-from .search_path import SearchPath
-from .attributes_helper import AttributesHelper
+from zemberek.morphology.analysis.surface_transitions import SurfaceTransition
+from zemberek.morphology.analysis.single_analysis import SingleAnalysis
+from zemberek.morphology.analysis.search_path import SearchPath
+from zemberek.morphology.analysis.attributes_helper import AttributesHelper
 
 logger = logging.getLogger(__name__)
 

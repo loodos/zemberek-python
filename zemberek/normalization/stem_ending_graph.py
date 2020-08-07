@@ -4,10 +4,10 @@ from pkg_resources import resource_filename
 
 if TYPE_CHECKING:
     from zemberek.morphology import TurkishMorphology
-    from .node import Node
+    from zemberek.normalization.node import Node
 
 from zemberek.core.turkish import PrimaryPos
-from .character_graph import CharacterGraph
+from zemberek.normalization.character_graph import CharacterGraph
 
 
 class StemEndingGraph:

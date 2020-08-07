@@ -3,17 +3,17 @@ from __future__ import annotations
 from typing import List, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..morphotactics import TurkishMorphotactics
-    from ..morphotactics.stem_transition import StemTransition
-    from ..morphotactics.suffix_transition import SuffixTransition
-    from ..morphotactics.morpheme import Morpheme
-    from ..lexicon import DictionaryItem
+    from zemberek.morphology.morphotactics import TurkishMorphotactics
+    from zemberek.morphology.morphotactics.stem_transition import StemTransition
+    from zemberek.morphology.morphotactics.suffix_transition import SuffixTransition
+    from zemberek.morphology.morphotactics.morpheme import Morpheme
+    from zemberek.morphology.lexicon import DictionaryItem
 
 from zemberek.core.turkish import PhoneticAttribute
-from ..analysis.single_analysis import SingleAnalysis
-from ..analysis.search_path import SearchPath
-from ..analysis.surface_transitions import SurfaceTransition
-from ..analysis.attributes_helper import AttributesHelper
+from zemberek.morphology.analysis.single_analysis import SingleAnalysis
+from zemberek.morphology.analysis.search_path import SearchPath
+from zemberek.morphology.analysis.surface_transitions import SurfaceTransition
+from zemberek.morphology.analysis.attributes_helper import AttributesHelper
 
 
 class WordGenerator:

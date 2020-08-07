@@ -3,10 +3,10 @@ from typing import Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zemberek.core.turkish import PhoneticAttribute
-    from ..lexicon import DictionaryItem
-    from .morpheme_state import MorphemeState
+    from zemberek.morphology.lexicon import DictionaryItem
+    from zemberek.morphology.morphotactics.morpheme_state import MorphemeState
 
-from .morpheme_transition import MorphemeTransition
+from zemberek.morphology.morphotactics.morpheme_transition import MorphemeTransition
 
 
 class StemTransition(MorphemeTransition):

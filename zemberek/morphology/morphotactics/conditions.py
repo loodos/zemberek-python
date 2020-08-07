@@ -4,12 +4,12 @@ from abc import ABC
 
 if TYPE_CHECKING:
     from zemberek.core.turkish import SecondaryPos, RootAttribute, PhoneticAttribute
-    from ..lexicon import DictionaryItem
-    from ..analysis.search_path import SearchPath
-    from .morpheme import Morpheme
-    from .morpheme_state import MorphemeState
+    from zemberek.morphology.lexicon import DictionaryItem
+    from zemberek.morphology.analysis.search_path import SearchPath
+    from zemberek.morphology.morphotactics.morpheme import Morpheme
+    from zemberek.morphology.morphotactics.morpheme_state import MorphemeState
 
-from .operator import Operator
+from zemberek.morphology.morphotactics.operator import Operator
 
 
 class Conditions(ABC):

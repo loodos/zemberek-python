@@ -1,7 +1,7 @@
 from typing import List, Dict
 
-from ..text import TextUtil
-from .turkic_letter import TurkicLetter
+from zemberek.core.text import TextUtil
+from zemberek.core.turkish.turkic_letter import TurkicLetter
 
 
 class TurkishAlphabet:

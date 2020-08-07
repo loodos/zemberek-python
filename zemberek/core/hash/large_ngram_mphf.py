@@ -3,8 +3,8 @@ import numpy as np
 from typing import List, BinaryIO, Tuple
 from struct import unpack
 
-from .mphf import Mphf
-from .multi_level_mphf import MultiLevelMphf
+from zemberek.core.hash.mphf import Mphf
+from zemberek.core.hash.multi_level_mphf import MultiLevelMphf
 
 
 class LargeNgramMphf(Mphf):

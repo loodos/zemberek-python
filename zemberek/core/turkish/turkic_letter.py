@@ -1,6 +1,6 @@
 class TurkicLetter:
     """
-    This is a Letter which contains Turkic language specific attributes, such as vowel type,
+    This class represents a Letter which contains Turkic language specific attributes, such as vowel type,
     English equivalent characters.
     """
     UNDEFINED: 'TurkicLetter'

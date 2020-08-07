@@ -5,13 +5,13 @@ import numpy as np
 from typing import List, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..lexicon import DictionaryItem
-    from .search_path import SearchPath
+    from zemberek.morphology.lexicon import DictionaryItem
+    from zemberek.morphology.analysis.search_path import SearchPath
 
 
 from zemberek.core.turkish import RootAttribute, SecondaryPos
-from ..morphotactics import TurkishMorphotactics
-from ..morphotactics.morpheme import Morpheme
+from zemberek.morphology.morphotactics import TurkishMorphotactics
+from zemberek.morphology.morphotactics.morpheme import Morpheme
 
 
 class SingleAnalysis:

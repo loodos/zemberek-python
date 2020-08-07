@@ -15,7 +15,7 @@ from antlr4.Token import Token, CommonToken
 from queue import Queue
 
 from zemberek.core.turkish import TurkishAlphabet
-from .custom_lexer_ATN_simulator import CustomLexerATNSimulator
+from zemberek.tokenization.antlr.custom_lexer_ATN_simulator import CustomLexerATNSimulator
 
 
 class TurkishLexer(Lexer):

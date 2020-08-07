@@ -14,7 +14,7 @@ examples = ["Yrn okua gidicem",
             "Hayır hayat telaşm olmasa alacam buraları gökdelen dikicem.",
             "yok hocam kesınlıkle oyle birşey yok",
             "herseyi soyle hayatında olmaması gerek bence boyle ınsanların falan baskı yapıyosa",
-            "email adresim abdullah.oluk@loodos.com",
+            "email adresim zemberek_python@loodos.com",
             "Kredi başvrusu yapmk istiyrum.",
             "Bankanizin hesp blgilerini ogrenmek istyorum."]
 

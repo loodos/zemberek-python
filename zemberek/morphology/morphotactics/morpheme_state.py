@@ -5,11 +5,11 @@ import logging
 from typing import List, Union,Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .morpheme import Morpheme
+    from zemberek.morphology.morphotactics.morpheme import Morpheme
 
-from .conditions import Conditions
-from .morpheme_transition import MorphemeTransition
-from .suffix_transition import SuffixTransition
+from zemberek.morphology.morphotactics.conditions import Conditions
+from zemberek.morphology.morphotactics.morpheme_transition import MorphemeTransition
+from zemberek.morphology.morphotactics.suffix_transition import SuffixTransition
 
 logger = logging.getLogger(__name__)
 

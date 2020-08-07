@@ -3,12 +3,12 @@ from typing import Set, Union, TYPE_CHECKING
 from enum import Enum, auto
 
 if TYPE_CHECKING:
-    from ..morphotactics.suffix_transition import SuffixTransition
-    from ..morphotactics.morpheme_transition import MorphemeTransition
-    from ..morphotactics.stem_transition import StemTransition
+    from zemberek.morphology.morphotactics.suffix_transition import SuffixTransition
+    from zemberek.morphology.morphotactics.morpheme_transition import MorphemeTransition
+    from zemberek.morphology.morphotactics.stem_transition import StemTransition
 
 from zemberek.core.turkish import PhoneticAttribute, TurkishAlphabet
-from .attributes_helper import AttributesHelper
+from zemberek.morphology.analysis.attributes_helper import AttributesHelper
 
 
 class SurfaceTransition:

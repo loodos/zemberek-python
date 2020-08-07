@@ -1,7 +1,7 @@
 from typing import Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .single_analysis import SingleAnalysis
+    from zemberek.morphology.analysis.single_analysis import SingleAnalysis
 
 
 class SingleAnalysisIterator:

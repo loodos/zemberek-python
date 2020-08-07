@@ -3,8 +3,8 @@ import re
 from typing import List, Dict, Set, Tuple
 
 from zemberek.core.turkish import TurkishAlphabet
-from .perceptron_segmenter import PerceptronSegmenter
-from .span import Span
+from zemberek.tokenization.perceptron_segmenter import PerceptronSegmenter
+from zemberek.tokenization.span import Span
 
 
 class TurkishSentenceExtractor(PerceptronSegmenter):

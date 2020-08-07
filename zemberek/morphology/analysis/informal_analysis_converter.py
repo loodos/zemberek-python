@@ -4,7 +4,7 @@ from typing import Tuple, Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from ..analysis.single_analysis import SingleAnalysis
 
-from ..generator import WordGenerator
+from zemberek.morphology.generator import WordGenerator
 
 
 class InformalAnalysisConverter:

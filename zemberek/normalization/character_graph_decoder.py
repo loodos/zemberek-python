@@ -7,8 +7,8 @@ from typing import Dict, Set, Tuple, TYPE_CHECKING
 from abc import ABC
 
 if TYPE_CHECKING:
-    from .node import Node
-    from .character_graph import CharacterGraph
+    from zemberek.normalization.node import Node
+    from zemberek.normalization.character_graph import CharacterGraph
 
 from zemberek.core.turkish import TurkishAlphabet
 

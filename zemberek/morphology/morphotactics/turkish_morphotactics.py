@@ -1,21 +1,20 @@
 from __future__ import annotations
 
 import logging
-
 from copy import deepcopy
 from typing import Dict, Set, List, Tuple, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..lexicon import RootLexicon
+    from zemberek.morphology.lexicon import RootLexicon
 
 from zemberek.core.utils import ReadWriteLock
 from zemberek.core.turkish import PrimaryPos, SecondaryPos, RootAttribute, PhoneticAttribute, TurkishAlphabet
-from ..analysis.attributes_helper import AttributesHelper
-from ..lexicon import DictionaryItem
-from .morpheme import Morpheme
-from .morpheme_state import MorphemeState
-from .conditions import Conditions
-from .stem_transition import StemTransition
+from zemberek.morphology.analysis.attributes_helper import AttributesHelper
+from zemberek.morphology.lexicon import DictionaryItem
+from zemberek.morphology.morphotactics.morpheme import Morpheme
+from zemberek.morphology.morphotactics.morpheme_state import MorphemeState
+from zemberek.morphology.morphotactics.conditions import Conditions
+from zemberek.morphology.morphotactics.stem_transition import StemTransition
 
 logger = logging.getLogger(__name__)
 

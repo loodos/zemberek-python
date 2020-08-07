@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 from zemberek.core.turkish import TurkishAlphabet, Turkish
 from zemberek.morphology.analysis.word_analysis_surface_formatter import WordAnalysisSurfaceFormatter
 from zemberek.lm import SmoothLM
-from .stem_ending_graph import StemEndingGraph
-from .character_graph_decoder import CharacterGraphDecoder
+from zemberek.normalization.stem_ending_graph import StemEndingGraph
+from zemberek.normalization.character_graph_decoder import CharacterGraphDecoder
 
 logger = logging.getLogger(__name__)
 

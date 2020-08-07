@@ -3,8 +3,8 @@ from antlr4.InputStream import InputStream
 from antlr4.error.ErrorListener import ConsoleErrorListener
 from antlr4.Token import Token as Token_
 
-from .token import Token
-from .antlr.turkish_lexer import TurkishLexer
+from zemberek.tokenization.token import Token
+from zemberek.tokenization.antlr.turkish_lexer import TurkishLexer
 
 
 class TurkishTokenizer:

@@ -4,7 +4,7 @@ setuptools.setup(
     name='zemberek',
     version='0.1.0',
     author='Loodos Tech',
-    description='Python implementation of open source text processing library zemberek',
+    description='Python implementation of open source text processing library for Turkish, zemberek',
     packages=setuptools.find_packages(),
     include_package_data=True,
     package_data={

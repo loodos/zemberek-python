@@ -7,18 +7,18 @@ from typing import Tuple, TYPE_CHECKING
 from functools import lru_cache
 
 if TYPE_CHECKING:
-    from ..tokenization.token import Token
-    from .analysis.single_analysis import SingleAnalysis
+    from zemberek.tokenization.token import Token
+    from zemberek.morphology.analysis.single_analysis import SingleAnalysis
 
 from zemberek.tokenization import TurkishTokenizer
 from zemberek.core.turkish import TurkishAlphabet, StemAndEnding, PrimaryPos
 from zemberek.core.text import TextUtil
-from .analysis.word_analysis import WordAnalysis
-from .analysis.rule_based_analyzer import RuleBasedAnalyzer
-from .analysis.unidentified_token_analyzer import UnidentifiedTokenAnalyzer
-from .generator import WordGenerator
-from .lexicon import RootLexicon
-from .morphotactics import TurkishMorphotactics, InformalTurkishMorphotactics
+from zemberek.morphology.analysis.word_analysis import WordAnalysis
+from zemberek.morphology.analysis.rule_based_analyzer import RuleBasedAnalyzer
+from zemberek.morphology.analysis.unidentified_token_analyzer import UnidentifiedTokenAnalyzer
+from zemberek.morphology.generator import WordGenerator
+from zemberek.morphology.lexicon import RootLexicon
+from zemberek.morphology.morphotactics import TurkishMorphotactics, InformalTurkishMorphotactics
 
 logger = logging.getLogger(__name__)
 

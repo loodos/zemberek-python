@@ -1,5 +1,4 @@
-
-from .turkish_alphabet import TurkishAlphabet
+from zemberek.core.turkish.turkish_alphabet import TurkishAlphabet
 
 
 class Turkish:
