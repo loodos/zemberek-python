@@ -1,6 +1,6 @@
 from .morphology import TurkishMorphology
 from .normalization import TurkishSentenceNormalizer, TurkishSpellChecker
-from .tokenization import TurkishSentenceExtractor
+from .tokenization import TurkishSentenceExtractor, TurkishTokenizer
 
 import logging
 import sys

@@ -1,9 +1,12 @@
 import time
 import logging
 
-from zemberek import TurkishSpellChecker, TurkishSentenceNormalizer
-from zemberek import TurkishSentenceExtractor
-from zemberek import TurkishMorphology
+from zemberek import (
+    TurkishSpellChecker,
+    TurkishSentenceNormalizer,
+    TurkishSentenceExtractor,
+    TurkishMorphology,
+    TurkishTokenizer)
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +23,7 @@ examples = ["Yrn okua gidicem",
 
 mor = TurkishMorphology.create_with_defaults()
 
+# SENTENCE NORMALIZATION
 start = time.time()
 normalizer = TurkishSentenceNormalizer(mor)
 logger.info(f"Normalization instance created in: {time.time() - start} s")
@@ -34,6 +38,8 @@ start = time.time()
 sc = TurkishSpellChecker(mor)
 logger.info(f"Spell checker instance created in: {time.time() - start} s")
 
+
+# SPELLING SUGGESTION
 li = ["okuyablirim", "tartısıyor", "Ankar'ada", "knlıca", "yapablrim", "kıredi", "geldm", "geliyom", "aldm", "asln"]
 start = time.time()
 for word in li:
@@ -41,6 +47,7 @@ for word in li:
 logger.info(f"Spells checked in: {time.time() - start} s")
 
 
+# SENTENCE BOUNDARY DETECTION
 start = time.time()
 extractor = TurkishSentenceExtractor()
 print("Extractor instance created in: ", time.time() - start, " s")
@@ -60,3 +67,19 @@ print(f"Sentences separated in {time.time() - start}s")
 for sentence in sentences:
     print(sentence)
 
+
+# SINGLE WORD MORPHOLOGICAL ANALYSIS
+results = mor.analyze("kalemin")
+for result in results:
+    print(result)
+
+
+# TOKENIZATION
+tokenizer = TurkishTokenizer.DEFAULT
+
+tokens = tokenizer.tokenize("Saat 12:00.")
+for token in tokens:
+    print('Content = ', token.content)
+    print('Type = ', token.type_.name)
+    print('Start = ', token.start)
+    print('Stop = ', token.end, '\n')
