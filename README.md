@@ -1,6 +1,8 @@
+# ZEMBEREK-PYTHON
+
 Python implementation of Natural Language Processing library 
 for Turkish, [zemberek](https://github.com/ahmetaa/zemberek-nlp). It is based on
-zemberek 0.17.1 and is completely written in Python meaning these is no need to setup
+zemberek 0.17.1 and is completely written in Python meaning there is no need to setup
 a Java development environment to run it.
 
 **Dependencies**
@@ -26,8 +28,7 @@ Currently, following modules are supported.
 ## Installation
 You can install the package with pip
 
-    pip install zemberek
-
+    pip install zemberek-python
 
 ## Examples
 Example usages can be found in [examples.py](zemberek/examples.py)

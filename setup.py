@@ -1,10 +1,15 @@
 import setuptools
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setuptools.setup(
-    name='zemberek',
+    name='zemberek-python',
     version='0.1.0',
     author='Loodos Tech',
-    description='Python implementation of open source text processing library for Turkish, zemberek',
+    description='Python port of open source text processing library for Turkish, zemberek',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     include_package_data=True,
     package_data={
