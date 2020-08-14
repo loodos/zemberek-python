@@ -1,9 +1,13 @@
 # ZEMBEREK-PYTHON
 
 Python implementation of Natural Language Processing library 
-for Turkish, [zemberek](https://github.com/ahmetaa/zemberek-nlp). It is based on
+for Turkish, [zemberek-nlp](https://github.com/ahmetaa/zemberek-nlp). It is based on
 zemberek 0.17.1 and is completely written in Python meaning there is no need to setup
 a Java development environment to run it.
+
+*Source Code*
+
+https://github.com/Loodos/zemberek-python
 
 **Dependencies**
 * antlr4-python3-runtime==4.8
@@ -41,5 +45,5 @@ affects the performance and accuracy a bit.
 
 
 ## Credits
-This project is Python port of [zemberek](https://github.com/ahmetaa/zemberek-nlp). 
+This project is Python port of [zemberek-nlp](https://github.com/ahmetaa/zemberek-nlp). 
 

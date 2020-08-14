@@ -45,7 +45,7 @@ class TurkishMorphology:
     def create_with_defaults() -> 'TurkishMorphology':
         start_time = time.time()
         instance = TurkishMorphology.Builder(RootLexicon.get_default()).build()
-        logger.info(f"Initialized in {time.time() - start_time}")
+        logger.info(f"TurkishMorphology instance initialized in {time.time() - start_time}")
         return instance
 
     @lru_cache(maxsize=200)

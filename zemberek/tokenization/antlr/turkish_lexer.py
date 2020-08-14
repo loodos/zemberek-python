@@ -51,7 +51,8 @@ class TurkishLexer(Lexer):
                 if next2.type == 19 and next2.text == ".":
                     abbrev = next_.text + "."
                     if self.abbreviations and abbrev in self.abbreviations:
-                        common_token: CommonToken = CommonToken(type=1).text(abbrev)
+                        common_token: CommonToken = CommonToken(type=1)
+                        common_token.text = abbrev
                         common_token.start = next_.start
                         common_token.stop = next2.stop
                         common_token.tokenIndex = next_.tokenIndex

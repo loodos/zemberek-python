@@ -95,7 +95,7 @@ class TurkishNumeralEndingMachine:
             self.transitions: List[Union[None, 'TurkishNumeralEndingMachine.State']] = [None] * 10
 
         def add_(self, i: int, state: 'TurkishNumeralEndingMachine.State'):
-            self.transitions.insert(i, state)
+            self.transitions[i] = state
 
     class StateId(Enum):
         ROOT = ""

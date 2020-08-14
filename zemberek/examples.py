@@ -6,7 +6,8 @@ from zemberek import (
     TurkishSentenceNormalizer,
     TurkishSentenceExtractor,
     TurkishMorphology,
-    TurkishTokenizer)
+    TurkishTokenizer
+)
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ print(f"Sentences separated in {time.time() - start}s")
 
 for sentence in sentences:
     print(sentence)
-
+print("\n")
 
 # SINGLE WORD MORPHOLOGICAL ANALYSIS
 results = morphology.analyze("kalemin")

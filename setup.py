@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name='zemberek-python',
     version='0.1.0',
-    author='Loodos Tech',
-    description='Python port of open source text processing library for Turkish, zemberek',
+    author='Loodos',
+    description='Python port of open source text processing library for Turkish, zemberek-nlp',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
@@ -18,7 +18,8 @@ setuptools.setup(
            "zemberek/resources/*.slm",
            "zemberek/resources/*.pickle"]
     },
-    url='https://gitlab.com/loodos/inhouse/marvin/lds-marvin-zemberek-python.git',
+    license='Apache License 2.0',
+    url='https://www.loodos.com.tr/',
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent"
