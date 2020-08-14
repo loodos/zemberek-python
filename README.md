@@ -10,8 +10,8 @@ a Java development environment to run it.
 https://github.com/Loodos/zemberek-python
 
 **Dependencies**
-* antlr4-python3-runtime==4.8
-* numpy==1.18.2
+* antlr4-python3-runtime>=4.8
+* numpy>=1.18.2
 
 ## Supported Modules
 Currently, following modules are supported.
