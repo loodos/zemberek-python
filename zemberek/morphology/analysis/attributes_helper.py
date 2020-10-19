@@ -34,7 +34,7 @@ class AttributesHelper:
                 else:
                     attrs.add(PhoneticAttribute.LastVowelBack)
 
-                if last.is_rounded():
+                if last_vowel.is_rounded():
                     attrs.add(PhoneticAttribute.LastVowelRounded)
                 else:
                     attrs.add(PhoneticAttribute.LastVowelUnrounded)

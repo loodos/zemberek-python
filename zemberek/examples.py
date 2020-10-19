@@ -8,9 +8,25 @@ from zemberek import (
     TurkishMorphology,
     TurkishTokenizer
 )
-
 logger = logging.getLogger(__name__)
+"""
 
+mor = TurkishMorphology.create_with_defaults()
+nor = TurkishSentenceNormalizer(mor)
+
+print("file read started")
+with open("/Users/harunuz/PycharmProjects/zemberek-python/train.txt", "r", encoding="utf-8") as f:
+    li = f.readlines()
+print("num of lines", len(li))
+
+start = time.time()
+for example in li:
+    if len(example) > 3:
+        nor.normalize(example)
+logger.info(f"Sentences normalized in: {time.time() - start} s")
+
+exit(0)
+"""
 examples = ["Yrn okua gidicem",
             "Tmm, yarin havuza giricem ve aksama kadar yaticam :)",
             "ah aynen ya annemde fark ettı siz evinizden cıkmayın diyo",
