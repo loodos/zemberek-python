@@ -11,7 +11,7 @@ https://github.com/Loodos/zemberek-python
 
 **Dependencies**
 * antlr4-python3-runtime>=4.8
-* numpy>=1.18.2
+* numpy>=1.19.0
 
 ## Supported Modules
 Currently, following modules are supported.
