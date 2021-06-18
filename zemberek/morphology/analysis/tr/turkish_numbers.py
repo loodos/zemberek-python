@@ -73,7 +73,7 @@ class TurkishNumbers:
                         result = f"{TurkishNumbers.convert_three_digits(uclu)} {TurkishNumbers.thousands[sayac]}" \
                                  f" {result}"
                 sayac += 1
-                giris_pos /= 1000
+                giris_pos //= 1000
 
             if inp < 0:
                 return f"eksi {result.strip()}"
