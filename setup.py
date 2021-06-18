@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='zemberek-python',
-    version='0.1.1',
+    version='0.1.2',
     author='Loodos',
     description='Python port of open source text processing library for Turkish, zemberek-nlp',
     long_description=long_description,
