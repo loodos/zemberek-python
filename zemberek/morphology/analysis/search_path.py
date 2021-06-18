@@ -44,7 +44,7 @@ class SearchPath:
     def get_copy_for_generation(self, surface_node: SurfaceTransition, phonetic_attributes: Set[PhoneticAttribute]) -> \
             'SearchPath':
         is_terminal = surface_node.get_state().terminal_
-        hist: List[SurfaceTransition] = self.transitions.copy()
+        hist: List[SurfaceTransition] = deepcopy(self.transitions)
         hist.append(surface_node)
         path = SearchPath(self.tail, surface_node.get_state(), hist, phonetic_attributes, is_terminal)
         path.contains_suffix_with_surface = self.contains_suffix_with_surface or len(surface_node.surface) != 0
