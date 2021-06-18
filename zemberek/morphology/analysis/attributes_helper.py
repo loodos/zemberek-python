@@ -46,15 +46,8 @@ class AttributesHelper:
             else:
                 attrs = deepcopy(predecessor_attrs)
                 attrs.update(cls.NO_VOWEL_ATTRIBUTES)
-                try:
-                    attrs.remove(PhoneticAttribute.LastLetterVowel)
-                except KeyError:
-                    pass
-
-                try:
-                    attrs.remove(PhoneticAttribute.ExpectsConsonant)
-                except KeyError:
-                    pass
+                attrs.discard(PhoneticAttribute.LastLetterVowel)
+                attrs.discard(PhoneticAttribute.ExpectsConsonant)
 
             last = cls.alphabet.get_last_letter(seq)
             if last.is_voiceless():

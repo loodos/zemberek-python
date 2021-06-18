@@ -41,8 +41,6 @@ class RuleBasedAnalyzer:
             raise NotImplementedError("Debug mode is not implemented")
 
         candidates = self.stem_transitions.get_prefix_matches(inp, self.ascii_tolerant)
-        if self.debug_mode:
-            raise NotImplementedError("Debug mode is not implemented")
 
         paths: List[SearchPath] = []
 
@@ -113,10 +111,7 @@ class RuleBasedAnalyzer:
 
                             attributes = deepcopy(path.phonetic_attributes) if tail_equals_surface else \
                                 AttributesHelper.get_morphemic_attributes(surface, path.phonetic_attributes)
-                            try:
-                                attributes.remove(PhoneticAttribute.CannotTerminate)
-                            except KeyError:
-                                logger.debug("There is no CannotTerminate element in the set")
+                            attributes.discard(PhoneticAttribute.CannotTerminate)
                             last_token = suffix_transition.get_last_template_token()
                             if last_token.type_ == SurfaceTransition.TemplateTokenType.LAST_VOICED:
                                 attributes.add(PhoneticAttribute.ExpectsConsonant)

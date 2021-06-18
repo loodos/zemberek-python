@@ -95,10 +95,8 @@ class WordGenerator:
             surface_transition = SurfaceTransition(surface, suffix_transition)
             attributes = AttributesHelper.get_morphemic_attributes(surface, g_path.path.phonetic_attributes)
 
-            try:
-                attributes.remove(PhoneticAttribute.CannotTerminate)
-            except KeyError:
-                pass
+            attributes.discard(PhoneticAttribute.CannotTerminate)
+
             last_token: SurfaceTransition.SuffixTemplateToken = suffix_transition.get_last_template_token()
             if last_token.type_ == SurfaceTransition.TemplateTokenType.LAST_VOICED:
                 attributes.add(PhoneticAttribute.ExpectsConsonant)
@@ -136,8 +134,8 @@ class WordGenerator:
                     return WordGenerator.GenerationPath(path, self.morphemes)
 
             if m != self.morphemes[0]:
-                raise BaseException("Cannot generate Generation copy because transition morpheme and first morpheme to "
-                                    "consume does not match.")
+                raise Exception("Cannot generate Generation copy because transition morpheme and first morpheme to "
+                                "consume does not match.")
             return WordGenerator.GenerationPath(path, self.morphemes[1:])
 
         def matches(self, transition: SuffixTransition):
