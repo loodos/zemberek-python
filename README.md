@@ -10,7 +10,7 @@ a Java development environment to run it.
 https://github.com/Loodos/zemberek-python
 
 **Dependencies**
-* antlr4-python3-runtime>=4.8
+* antlr4-python3-runtime==4.8
 * numpy>=1.19.0
 
 ## Supported Modules
@@ -22,6 +22,7 @@ Currently, following modules are supported.
     * Single Word Analysis
     * Diacritics Ignored Analysis
     * Word Generation
+    * Sentence Analysis (no disambiguation yet)
 * Tokenization
     * Sentence Boundary Detection
     * Tokenization
