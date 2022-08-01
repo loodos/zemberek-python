@@ -54,7 +54,7 @@ def load_multimap(resource: str) -> Dict[str, Tuple[str]]:
             continue
         index = line.find("=")
         if index < 0:
-            raise BaseException(f"Line needs to have `=` symbol. But it is: {i} -" + line)
+            raise Exception(f"Line needs to have `=` symbol. But it is: {i} - {line}")
         key, value = line[0:index].strip(), line[index + 1:].strip()
         if value.find(',') >= 0:
             if key in multimap.keys():

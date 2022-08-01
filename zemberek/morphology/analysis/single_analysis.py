@@ -163,6 +163,15 @@ class SingleAnalysis:
             self.morpheme = morpheme
             self.surface = surface
 
+        def __str__(self):
+            return self.to_morpheme_string()
+
+        def to_morpheme_string(self) -> str:
+            return f"{self.surface_string()}{self.morpheme.id_}"
+
+        def surface_string(self) -> str:
+            return "" if len(self.surface) == 0 else f"{self.surface}:"
+
         def __eq__(self, other):
             if self is other:
                 return True
