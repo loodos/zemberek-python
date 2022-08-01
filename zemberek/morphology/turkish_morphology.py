@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 import logging
 
-from typing import Tuple, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING, List
 from functools import lru_cache
 
 if TYPE_CHECKING:
@@ -61,6 +61,15 @@ class TurkishMorphology:
             no_dot = s
 
         return TextUtil.normalize_apostrophes(no_dot)
+
+    def analyze_sentence(self, sentence: str) -> List[WordAnalysis]:
+
+        normalized = TextUtil.normalize_quotes_hyphens(sentence)
+        result = [
+            self.analyze_without_cache(token=t) for t in self.tokenizer.tokenize(normalized)
+        ]
+
+        return result
 
     def analyze_without_cache(self, word: str = None, token: Token = None) -> WordAnalysis:
         if word:

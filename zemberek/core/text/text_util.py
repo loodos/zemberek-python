@@ -11,3 +11,11 @@ class TextUtil:
         :return: cleaned input string
         """
         return re.sub(r'[′´`’‘]', "'", inp)
+
+    @staticmethod
+    def normalize_quotes_hyphens(inp: str) -> str:
+        inp_ = re.sub(r"[“”»«″]|''", "\"", inp)
+        inp_ = re.sub(r"[′´`’‘]", "'", inp_)
+        inp_ = re.sub(r"[–]", "-", inp_)
+        return inp_
+
