@@ -1,10 +1,14 @@
 from abc import ABC
-from typing import Tuple
+from typing import Tuple, Union, Optional
 
 
 class Mphf(ABC):
 
-    def get_(self, key: Tuple[int, ...], hash_: int) -> int:
+    def get_(
+            self,
+            key: Union[Tuple[int, ...], str],
+            initial_hash: Optional[int] = None
+    ) -> int:
         raise NotImplementedError
 
     @staticmethod
