@@ -5,11 +5,11 @@ import numpy as np
 from typing import List, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zemberek.morphology.lexicon import DictionaryItem
     from zemberek.morphology.analysis.search_path import SearchPath
 
 
 from zemberek.core.turkish import RootAttribute, SecondaryPos
+from zemberek.morphology.lexicon import DictionaryItem
 from zemberek.morphology.morphotactics import TurkishMorphotactics
 from zemberek.morphology.morphotactics.morpheme import Morpheme
 

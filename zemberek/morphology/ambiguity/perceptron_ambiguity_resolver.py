@@ -116,7 +116,7 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
             for k, ig in enumerate(w3.igs):
                 feats["20:" + str(k) + "-" + ig] += 1
 
-            feats["22:" + trigram[2].group_boundaries.shape[0]] += 1
+            feats[f"22:{trigram[2].group_boundaries.shape[0]}"] += 1
 
             for k in feats.keys():
                 feats[k] = np.int32(feats[k])
@@ -147,7 +147,7 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
 
                 analyses: List[SingleAnalysis] = list(analysis_data.analysis_results)
 
-                if len(analyses) != 0:
+                if len(analyses) == 0:
                     analyses = [SingleAnalysis.unknown(analysis_data.inp)]
 
                 for analysis in analyses:

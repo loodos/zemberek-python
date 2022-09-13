@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from zemberek.morphology.analysis.sentence_word_analysis import SentenceWordAnalysis
+    from zemberek.morphology.analysis.single_analysis import SingleAnalysis
 
 
 class SentenceAnalysis:
@@ -14,3 +15,6 @@ class SentenceAnalysis:
 
     def __iter__(self):
         return iter(self.word_analyses)
+
+    def best_analysis(self) -> List[SingleAnalysis]:
+        return [s.best_analysis for s in self.word_analyses]

@@ -20,7 +20,7 @@ class LossyIntLookup:
         self.data = data
 
     def get_(self, s: str) -> np.int32:
-        index = self.mphf.get_(s)
+        index = self.mphf.get_(s) * 2
         fingerprint: int = LossyIntLookup.get_fingerprint(s)
 
         if fingerprint == self.data[index]:

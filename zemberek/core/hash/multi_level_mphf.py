@@ -37,10 +37,11 @@ class MultiLevelMphf(Mphf):
 
     @staticmethod
     def hash_for_str(data: str, seed: int) -> np.int32:
-        d = np.int(seed) if seed > 0 else MultiLevelMphf.INITIAL_HASH_SEED
+        d = np.int32(seed) if seed > 0 else MultiLevelMphf.INITIAL_HASH_SEED
 
         for c in data:
-            d = (d ^ np.int16(ord(c))) * MultiLevelMphf.HASH_MULTIPLIER
+            d = (d ^ np.int32(ord(c))) * MultiLevelMphf.HASH_MULTIPLIER
+
 
         return d & np.int32(0x7fffffff)
 
@@ -75,10 +76,11 @@ class MultiLevelMphf(Mphf):
             seed = hd.get_seed(initial_hash)
 
             if seed != 0:
-                return self.hash_for_str(key, seed) % self.hash_level_data[0].key_amount
-            else:
-                return self.hash_level_data[i - 1].failed_indexes[self.hash_for_str(key, seed) %
-                                                                  self.hash_level_data[i].key_amount]
+                if i == 0:
+                    return self.hash_for_str(key, seed) % self.hash_level_data[0].key_amount
+                else:
+                    return self.hash_level_data[i - 1].failed_indexes[self.hash_for_str(key, seed) %
+                                                                      self.hash_level_data[i].key_amount]
 
         return BaseException("Cannot be here")
 
