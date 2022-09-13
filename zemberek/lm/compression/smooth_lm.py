@@ -24,7 +24,7 @@ class SmoothLM:
 
     def __init__(self, resource: str, log_base: float, unigram_weigth: float, unknown_backoff_penalty: float,
                  use_stupid_backoff: bool, stupid_backoff_alpha: float, ngram_key_file):
-        with open(resource, "rb") as f:  # "marvin/zemberek/resources/lm-unigram.slm"
+        with open(resource, "rb") as f:  # "zemberek/resources/lm-unigram.slm"
             self.version, = unpack('>i', f.read(4))
             self.type_int, = unpack('>i', f.read(4))
             self.log_base, = unpack('>d', f.read(8))

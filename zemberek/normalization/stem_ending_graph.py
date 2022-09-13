@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Tuple, FrozenSet, TYPE_CHECKING
 from pkg_resources import resource_filename
 
+import os
+
 if TYPE_CHECKING:
     from zemberek.morphology import TurkishMorphology
     from zemberek.normalization.node import Node
@@ -24,7 +26,7 @@ class StemEndingGraph:
     @staticmethod
     def load_lines_from_resource(path: str = None) -> Tuple[str]:
         if not path:
-            path = resource_filename("zemberek", "resources/normalization/endings.txt")
+            path = resource_filename("zemberek", os.path.join("resources", "normalization", "endings.txt"))
         with open(path, 'r', encoding='utf-8') as f:
             lines = tuple(line.replace('\n', "") for line in f.readlines())
         return lines

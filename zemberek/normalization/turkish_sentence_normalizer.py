@@ -3,6 +3,8 @@ import math
 from pkg_resources import resource_filename
 from typing import List, Tuple, Dict, FrozenSet, Set, Union
 
+import os
+
 from zemberek.core.turkish import TurkishAlphabet, SecondaryPos
 from zemberek.lm import SmoothLM
 from zemberek.morphology import TurkishMorphology
@@ -18,8 +20,11 @@ from zemberek.normalization.deasciifier.deasciifier import Deasciifier
 
 
 def load_replacements() -> Dict[str, str]:
-    with open(resource_filename("zemberek", "resources/normalization/multi-word-replacements.txt"), "r",
-              encoding="utf-8") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "multi-word-replacements.txt")),
+            "r",
+            encoding="utf-8"
+    ) as f:
         replacements: Dict[str, str] = {}
         for line in f:
             tokens = line.replace('\n', "").split("=")
@@ -28,7 +33,11 @@ def load_replacements() -> Dict[str, str]:
 
 
 def load_no_split() -> FrozenSet[str]:
-    with open(resource_filename("zemberek", "resources/normalization/no-split.txt"), "r", encoding="utf-8") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "no-split.txt")),
+            "r",
+            encoding="utf-8"
+    ) as f:
         s = set()
         for line in f:
             if len(line.replace('\n', "").strip()) > 0:
@@ -38,7 +47,11 @@ def load_no_split() -> FrozenSet[str]:
 
 def load_common_split() -> Dict[str, str]:
     common_splits: Dict[str, str] = {}
-    with open(resource_filename("zemberek", "resources/normalization/split.txt"), "r", encoding="utf-8") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "split.txt")),
+            "r",
+            encoding="utf-8"
+    ) as f:
         for line in f:
             tokens = line.replace('\n', "").split('-')
             common_splits[tokens[0].strip()] = tokens[1].strip()
@@ -75,7 +88,7 @@ class TurkishSentenceNormalizer:
     def __init__(self, morphology: TurkishMorphology):
         self.morphology = morphology
         self.analysis_converter: InformalAnalysisConverter = InformalAnalysisConverter(morphology.word_generator)
-        self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", "resources/lm.2gram.slm")). \
+        self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", os.path.join("resources", "lm.2gram.slm"))).\
             log_base(math.e).build()
 
         graph = StemEndingGraph(morphology)
@@ -87,8 +100,11 @@ class TurkishSentenceNormalizer:
         self.no_split_words: FrozenSet[str] = load_no_split()
         self.common_splits = load_common_split()
 
-        with open(resource_filename("zemberek", "resources/normalization/question-suffixes.txt"), "r",
-                  encoding="utf-8") as f:
+        with open(
+                resource_filename("zemberek", os.path.join("resources", "normalization", "question-suffixes.txt")),
+                "r",
+                encoding="utf-8"
+        ) as f:
             lines = f.read().split('\n')
         del f
 
@@ -96,12 +112,12 @@ class TurkishSentenceNormalizer:
         self.always_apply_deasciifier = False
 
         self.lookup_manual: Dict[str, Tuple[str]] = load_multimap(
-            resource_filename("zemberek", "resources/normalization/candidates-manual.txt"))
-        self.lookup_from_graph: Dict[str, Tuple[str]] = load_multimap(resource_filename("zemberek",
-                                                                                        "resources/normalization/"
-                                                                                        "lookup-from-graph.txt"))
+            resource_filename("zemberek", os.path.join("resources", "normalization", "candidates-manual.txt")))
+        self.lookup_from_graph: Dict[str, Tuple[str]] = load_multimap(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "lookup-from-graph.txt"))
+        )
         self.lookup_from_ascii: Dict[str, Tuple[str]] = load_multimap(
-            resource_filename("zemberek", "resources/normalization/ascii-map.txt"))
+            resource_filename("zemberek", os.path.join("resources", "normalization", "ascii-map.txt")))
         for s in self.lookup_manual.keys():
             try:
                 self.lookup_from_graph.pop(s)

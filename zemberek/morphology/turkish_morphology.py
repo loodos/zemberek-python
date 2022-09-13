@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 import logging
+import os
 
 from typing import Tuple, TYPE_CHECKING, List, Optional
 from functools import lru_cache
@@ -42,7 +43,7 @@ class TurkishMorphology:
         self.use_unidentified_token_analyzer = builder.use_unidentifiedTokenAnalyzer
 
         if builder.ambiguity_resolver is None:
-            resource_path = resource_filename("zemberek", "resources/ambiguity/model-compressed")
+            resource_path = resource_filename("zemberek", os.path.join("resources", "ambiguity", "model-compressed"))
             try:
                 self.ambiguity_resolver = PerceptronAmbiguityResolver.from_resource(resource_path)
             except IOError as e:

@@ -81,13 +81,13 @@ sentence = "Yarın kar yağacak."
 analysis = morphology.analyze_sentence(sentence)
 after = morphology.disambiguate(sentence, analysis)
 
-print("Before disambiguation")
+print("\nBefore disambiguation")
 for e in analysis:
     print(f"Word = {e.inp}")
     for s in e:
         print(s.format_string())
 
-print("After disambiguation")
+print("\nAfter disambiguation")
 for s in after.best_analysis():
     print(s.format_string())
 

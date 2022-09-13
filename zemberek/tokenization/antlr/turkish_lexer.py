@@ -1,3 +1,4 @@
+import os
 import re
 
 from pkg_resources import resource_filename
@@ -21,7 +22,7 @@ from zemberek.tokenization.antlr.custom_lexer_ATN_simulator import CustomLexerAT
 class TurkishLexer(Lexer):
     _ATN: 'ATN'
     abbreviations: Set[str] = set()
-    fi = resource_filename("zemberek", "resources/abbreviations.txt")
+    fi = resource_filename("zemberek", os.path.join("resources", "abbreviations.txt"))
     with open(fi, "r", encoding="utf-8") as f:
         for line in f:
             if len(line.strip()) > 0:

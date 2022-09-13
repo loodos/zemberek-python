@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 import logging
 
@@ -30,7 +31,7 @@ class TurkishSpellChecker:
             graph = StemEndingGraph(morphology)
             self.decoder = CharacterGraphDecoder(graph.stem_graph)
             self.unigram_model: SmoothLM = SmoothLM.builder(
-                resource=resource_filename("zemberek", "resources/lm-unigram.slm")).build()
+                resource=resource_filename("zemberek", os.path.join("resources", "lm-unigram.slm"))).build()
             self.char_matcher = matcher
         else:
             self.decoder = decoder

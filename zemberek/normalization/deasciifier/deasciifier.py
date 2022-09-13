@@ -1,4 +1,5 @@
 import pickle
+import os
 
 from pkg_resources import resource_filename
 from typing import Dict
@@ -6,7 +7,10 @@ from typing import Dict
 
 class Deasciifier:
     turkish_context_size = 10
-    with open(resource_filename("zemberek", "resources/normalization/turkish_pattern_table.pickle"), "rb") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "turkish_pattern_table.pickle")),
+            "rb"
+    ) as f:
         turkish_pattern_table: Dict[str, Dict] = pickle.load(f)
     del f
     turkish_asciify_table = {u'ç': u'c', u'Ç': u'C', u'ğ': u'g', u'Ğ': u'G', u'ö': u'o',
