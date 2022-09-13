@@ -22,7 +22,8 @@ Currently, following modules are supported.
     * Single Word Analysis
     * Diacritics Ignored Analysis
     * Word Generation
-    * Sentence Analysis (no disambiguation yet)
+    * Sentence Analysis
+    * Morphological Disambiguation
 * Tokenization
     * Sentence Boundary Detection
     * Tokenization

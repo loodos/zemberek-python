@@ -40,6 +40,9 @@ class MultiLevelMphf(Mphf):
         d = np.int32(seed) if seed > 0 else MultiLevelMphf.INITIAL_HASH_SEED
 
         for c in data:
+            # this line produces a RuntimeWarning caused by an overflow during multiplication
+            # it has the same results with original in Java, but this is not a good behaviour
+            # there might be occasions where this causes a problem
             d = (d ^ np.int32(ord(c))) * MultiLevelMphf.HASH_MULTIPLIER
 
 
