@@ -17,7 +17,7 @@ class TurkishAlphabet:
 
     """
     INSTANCE: 'TurkishAlphabet'
-    lower_map = {ord(u'I'): u'ı'}
+    lower_map = {ord(u'I'): u'ı', ord(u"İ"): u"i"}
     upper_map = {ord(u'i'): u'İ'}
 
     def __init__(self):
