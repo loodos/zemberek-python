@@ -36,7 +36,8 @@ class TurkishAlphabet:
         self.turkish_specific = "çÇğĞıİöÖşŞüÜâîûÂÎÛ"
         self.turkish_specific_lookup = set("çÇğĞıİöÖşŞüÜâîûÂÎÛ")
         self.turkish_ascii = "cCgGiIoOsSuUaiuAIU"
-        self.ascii_eq_tr = set("cCgGiIoOsSuUçÇğĞıİöÖşŞüÜ")
+        self.ascii_eq_tr = "cCgGiIoOsSuUçÇğĞıİöÖşŞüÜ"
+        self.ascii_eq_tr_set = set(self.ascii_eq_tr)
         self.ascii_eq = "çÇğĞıİöÖşŞüÜcCgGiIoOsSuU"
         self.foreign_diacritics = "ÀÁÂÃÄÅÈÉÊËÌÍÎÏÑÒÓÔÕÙÚÛàáâãäåèéêëìíîïñòóôõùúû"
         self.diacritics_to_turkish = "AAAAAAEEEEIIIINOOOOUUUaaaaaaeeeeiiiinoooouuu"
@@ -66,7 +67,7 @@ class TurkishAlphabet:
 
     def contains_ascii_related(self, s: str) -> bool:
         for c in s:
-            if c in self.ascii_eq_tr:
+            if c in self.ascii_eq_tr_set:
                 return True
         return False
 
