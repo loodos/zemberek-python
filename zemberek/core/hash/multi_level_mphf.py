@@ -51,7 +51,7 @@ class MultiLevelMphf(Mphf):
     @staticmethod
     def hash_for_int_tuple(data: Tuple[int, ...], seed: int) -> np.int32:
         d = np.int32(seed) if seed > 0 else MultiLevelMphf.INITIAL_HASH_SEED
-        for a in data:
+        for a in np.asarray(data, dtype=np.int32):
             d = (d ^ a) * MultiLevelMphf.HASH_MULTIPLIER
 
         return d & np.int32(0x7fffffff)

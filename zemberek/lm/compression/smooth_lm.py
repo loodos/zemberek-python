@@ -41,12 +41,12 @@ class SmoothLM:
                 self.counts.insert(unigram_count, count)
             self.counts = tuple(self.counts)
 
-            self.probability_lookups = [FloatLookup((0.0,))]
+            self.probability_lookups = [FloatLookup(np.asarray([0.0], dtype=np.float32))]
             for unigram_count in range(1, self.order + 1):
                 self.probability_lookups.insert(unigram_count, FloatLookup.get_lookup_from_double(f))
             self.probability_lookups = tuple(self.probability_lookups)
 
-            self.backoff_lookups = [FloatLookup((0.0,))]
+            self.backoff_lookups = [FloatLookup(np.asarray([0.0], dtype=np.float32))]
             for unigram_count in range(1, self.order):
                 self.backoff_lookups.insert(unigram_count, FloatLookup.get_lookup_from_double(f))
             self.backoff_lookups = tuple(self.backoff_lookups)
@@ -58,11 +58,11 @@ class SmoothLM:
 
             unigram_count = self.ngram_data[1].count
 
-            self.unigram_probs = np.zeros(unigram_count)
+            self.unigram_probs = np.zeros((unigram_count,), dtype=np.float32)
             if self.order > 1:
-                self.unigram_backoffs = np.zeros(unigram_count)
+                self.unigram_backoffs = np.zeros((unigram_count,), dtype=np.float32)
             else:
-                self.unigram_backoffs = np.zeros(1)
+                self.unigram_backoffs = np.zeros((1,), dtype=np.float32)
 
             for vocabulary_size in range(unigram_count):
                 i = self.ngram_data[1].get_probability_rank(vocabulary_size)
@@ -100,17 +100,30 @@ class SmoothLM:
         self.stupid_backoff_alpha = stupid_backoff_alpha
 
         if log_base != 10.0:
+            self.change_log_base(log_base)
             self.stupid_backoff_log_alpha = (math.log(stupid_backoff_alpha) / math.log(log_base)) * 1.0
         else:
             self.stupid_backoff_log_alpha = float(log(stupid_backoff_alpha) / log(10.0))
 
-        self.log_base = log_base
+        # self.log_base = log_base
         if unigram_weigth != 1.0:
             raise NotImplementedError("Unigram smoothing is not implemented, it will be if needed")
 
         self.ngram_ids = None
         if ngram_key_file:
             raise NotImplementedError("Loading n-gram id data is not implemented, it will be if needed")
+
+    def change_log_base(self, new_base: float):
+        FloatLookup.change_base(self.unigram_probs, self.log_base, new_base)
+        FloatLookup.change_base(self.unigram_backoffs, self.log_base, new_base)
+
+        for i in range(2, len(self.probability_lookups)):
+
+            self.probability_lookups[i].change_self_base(self.log_base, new_base)
+            if i < len(self.backoff_lookups) - 1:
+                self.backoff_lookups[i].change_self_base(self.log_base, new_base)
+
+        self.log_base = np.float32(new_base)
 
     def ngram_exists(self, word_indexes: Tuple[int, ...]) -> bool:
         if len(word_indexes) < 1 or len(word_indexes) > self.order:

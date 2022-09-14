@@ -1,9 +1,11 @@
 import math
 
 from pkg_resources import resource_filename
-from typing import List, Tuple, Dict, FrozenSet, Set, Union
+from typing import List, Tuple, Dict, FrozenSet, Set, Union, OrderedDict as ODict
 
 import os
+import numpy as np
+from collections import OrderedDict
 
 from zemberek.core.turkish import TurkishAlphabet, SecondaryPos
 from zemberek.lm import SmoothLM
@@ -58,10 +60,10 @@ def load_common_split() -> Dict[str, str]:
     return common_splits
 
 
-def load_multimap(resource: str) -> Dict[str, Tuple[str]]:
+def load_multimap(resource: str) -> ODict[str, Tuple[str]]:
     with open(resource, "r", encoding="utf-8") as f:
         lines: List[str] = f.read().split('\n')
-    multimap: Dict[str, Tuple[str, ...]] = {}
+    multimap: OrderedDict[str, Tuple[str, ...]] = OrderedDict()
     for i, line in enumerate(lines):
         if len(line.strip()) == 0:
             continue
@@ -89,7 +91,7 @@ class TurkishSentenceNormalizer:
         self.morphology = morphology
         self.analysis_converter: InformalAnalysisConverter = InformalAnalysisConverter(morphology.word_generator)
         self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", os.path.join("resources", "lm.2gram.slm"))).\
-            log_base(math.e).build()
+            log_base(np.e).build()
 
         graph = StemEndingGraph(morphology)
         decoder = CharacterGraphDecoder(graph.stem_graph)
@@ -367,7 +369,7 @@ class TurkishSentenceNormalizer:
             self.history: Union[List['TurkishSentenceNormalizer.Candidate'], None] = None
             self.current: Union['TurkishSentenceNormalizer.Candidate', None] = None
             self.previous: Union['TurkishSentenceNormalizer.Hypothesis', None] = None
-            self.score: Union[float, None] = None
+            self.score: Union[np.float32, None] = None
 
         def __eq__(self, other):
             if self is other:
@@ -390,7 +392,7 @@ class TurkishSentenceNormalizer:
     class Candidate:
         def __init__(self, content: str):
             self.content = content
-            self.score = 1.0
+            self.score = np.float32(1.0)
 
         def __eq__(self, other):
             if self is other:
