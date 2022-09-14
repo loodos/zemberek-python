@@ -53,7 +53,7 @@ int and float types are 4 byte. The results were the same with Java, however, of
 these operations produced RuntimeWarning as the multiplication caused overflow. In Java 
 there were no overflow warnings whatsoever. I could not find a reasonable explanation to
 this situation, nor I could find a better way to implement it. So I suppressed overflow warnings
-for MultiLevelMphf. Please be aware that, this is not a healthy behaviour, and you should 
+for MultiLevelMphf. Therefore, please be aware that, this is not a healthy behaviour, and you should 
 be careful using this code.
 
 
