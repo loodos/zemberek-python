@@ -5,6 +5,8 @@ from struct import unpack
 
 from zemberek.core.hash.mphf import Mphf
 
+np.seterr(over='ignore')
+
 
 class MultiLevelMphf(Mphf):
     """
