@@ -75,6 +75,22 @@ for result in results:
     print(result)
 print("\n")
 
+# SENTENCE ANALYSIS AND DISAMBIGUATION
+
+sentence = "Yarın kar yağacak."
+analysis = morphology.analyze_sentence(sentence)
+after = morphology.disambiguate(sentence, analysis)
+
+print("\nBefore disambiguation")
+for e in analysis:
+    print(f"Word = {e.inp}")
+    for s in e:
+        print(s.format_string())
+
+print("\nAfter disambiguation")
+for s in after.best_analysis():
+    print(s.format_string())
+
 # TOKENIZATION
 tokenizer = TurkishTokenizer.DEFAULT
 

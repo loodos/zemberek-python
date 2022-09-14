@@ -1,3 +1,4 @@
+import os
 import re
 
 from pkg_resources import resource_filename
@@ -11,7 +12,7 @@ class TurkishNumbers:
     ten_to_ninety: Tuple[str] = ("", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan")
     roman_numeral_pattern = re.compile("^(M{0,3})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", flags=2)
     ordinal_map: Dict[str, str] = {}
-    path = resource_filename("zemberek", "resources/turkish-ordinal-numbers.txt")
+    path = resource_filename("zemberek", os.path.join("resources", "turkish-ordinal-numbers.txt"))
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
             key, value = line.split(':')

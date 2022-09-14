@@ -1,7 +1,11 @@
 import math
 
 from pkg_resources import resource_filename
-from typing import List, Tuple, Dict, FrozenSet, Set, Union
+from typing import List, Tuple, Dict, FrozenSet, Set, Union, OrderedDict as ODict
+
+import os
+import numpy as np
+from collections import OrderedDict
 
 from zemberek.core.turkish import TurkishAlphabet, SecondaryPos
 from zemberek.lm import SmoothLM
@@ -18,8 +22,11 @@ from zemberek.normalization.deasciifier.deasciifier import Deasciifier
 
 
 def load_replacements() -> Dict[str, str]:
-    with open(resource_filename("zemberek", "resources/normalization/multi-word-replacements.txt"), "r",
-              encoding="utf-8") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "multi-word-replacements.txt")),
+            "r",
+            encoding="utf-8"
+    ) as f:
         replacements: Dict[str, str] = {}
         for line in f:
             tokens = line.replace('\n', "").split("=")
@@ -28,7 +35,11 @@ def load_replacements() -> Dict[str, str]:
 
 
 def load_no_split() -> FrozenSet[str]:
-    with open(resource_filename("zemberek", "resources/normalization/no-split.txt"), "r", encoding="utf-8") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "no-split.txt")),
+            "r",
+            encoding="utf-8"
+    ) as f:
         s = set()
         for line in f:
             if len(line.replace('\n', "").strip()) > 0:
@@ -38,23 +49,27 @@ def load_no_split() -> FrozenSet[str]:
 
 def load_common_split() -> Dict[str, str]:
     common_splits: Dict[str, str] = {}
-    with open(resource_filename("zemberek", "resources/normalization/split.txt"), "r", encoding="utf-8") as f:
+    with open(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "split.txt")),
+            "r",
+            encoding="utf-8"
+    ) as f:
         for line in f:
             tokens = line.replace('\n', "").split('-')
             common_splits[tokens[0].strip()] = tokens[1].strip()
     return common_splits
 
 
-def load_multimap(resource: str) -> Dict[str, Tuple[str]]:
+def load_multimap(resource: str) -> ODict[str, Tuple[str]]:
     with open(resource, "r", encoding="utf-8") as f:
         lines: List[str] = f.read().split('\n')
-    multimap: Dict[str, Tuple[str, ...]] = {}
+    multimap: OrderedDict[str, Tuple[str, ...]] = OrderedDict()
     for i, line in enumerate(lines):
         if len(line.strip()) == 0:
             continue
         index = line.find("=")
         if index < 0:
-            raise BaseException(f"Line needs to have `=` symbol. But it is: {i} -" + line)
+            raise Exception(f"Line needs to have `=` symbol. But it is: {i} - {line}")
         key, value = line[0:index].strip(), line[index + 1:].strip()
         if value.find(',') >= 0:
             if key in multimap.keys():
@@ -75,8 +90,8 @@ class TurkishSentenceNormalizer:
     def __init__(self, morphology: TurkishMorphology):
         self.morphology = morphology
         self.analysis_converter: InformalAnalysisConverter = InformalAnalysisConverter(morphology.word_generator)
-        self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", "resources/lm.2gram.slm")). \
-            log_base(math.e).build()
+        self.lm: SmoothLM = SmoothLM.builder(resource_filename("zemberek", os.path.join("resources", "lm.2gram.slm"))). \
+            log_base(np.e).build()
 
         graph = StemEndingGraph(morphology)
         decoder = CharacterGraphDecoder(graph.stem_graph)
@@ -87,8 +102,11 @@ class TurkishSentenceNormalizer:
         self.no_split_words: FrozenSet[str] = load_no_split()
         self.common_splits = load_common_split()
 
-        with open(resource_filename("zemberek", "resources/normalization/question-suffixes.txt"), "r",
-                  encoding="utf-8") as f:
+        with open(
+                resource_filename("zemberek", os.path.join("resources", "normalization", "question-suffixes.txt")),
+                "r",
+                encoding="utf-8"
+        ) as f:
             lines = f.read().split('\n')
         del f
 
@@ -96,12 +114,12 @@ class TurkishSentenceNormalizer:
         self.always_apply_deasciifier = False
 
         self.lookup_manual: Dict[str, Tuple[str]] = load_multimap(
-            resource_filename("zemberek", "resources/normalization/candidates-manual.txt"))
-        self.lookup_from_graph: Dict[str, Tuple[str]] = load_multimap(resource_filename("zemberek",
-                                                                                        "resources/normalization/"
-                                                                                        "lookup-from-graph.txt"))
+            resource_filename("zemberek", os.path.join("resources", "normalization", "candidates-manual.txt")))
+        self.lookup_from_graph: Dict[str, Tuple[str]] = load_multimap(
+            resource_filename("zemberek", os.path.join("resources", "normalization", "lookup-from-graph.txt"))
+        )
         self.lookup_from_ascii: Dict[str, Tuple[str]] = load_multimap(
-            resource_filename("zemberek", "resources/normalization/ascii-map.txt"))
+            resource_filename("zemberek", os.path.join("resources", "normalization", "ascii-map.txt")))
         for s in self.lookup_manual.keys():
             try:
                 self.lookup_from_graph.pop(s)
@@ -118,16 +136,26 @@ class TurkishSentenceNormalizer:
 
         candidates_list: List['TurkishSentenceNormalizer.Candidates'] = []
 
+        candidates: List[str] = []
+        candidates_set: Set[str] = set()
+
         for i, current_token in enumerate(tokens):
             current = current_token.content
             next_ = None if i == len(tokens) - 1 else tokens[i + 1].content
             previous = None if i == 0 else tokens[i - 1].content
 
-            candidates: Set[str] = set()
+            candidates.clear()
+            candidates_set.clear()
 
-            candidates.update(self.lookup_manual.get(current, ()))
-            candidates.update(self.lookup_from_graph.get(current, ()))
-            candidates.update(self.lookup_from_ascii.get(current, ()))
+            for c in self.lookup_manual.get(current, ()) + self.lookup_from_graph.get(current, ()) + \
+                    self.lookup_from_ascii.get(current, ()):
+                if c not in candidates_set:
+                    candidates.append(c)
+                    candidates_set.add(c)
+
+            # candidates.update(self.lookup_manual.get(current, ()))
+            # candidates.update(self.lookup_from_graph.get(current, ()))
+            # candidates.update(self.lookup_from_ascii.get(current, ()))
 
             analyses: WordAnalysis = self.informal_ascii_tolerant_morphology.analyze(current)
 
@@ -135,14 +163,17 @@ class TurkishSentenceNormalizer:
                 if analysis.contains_informal_morpheme():
                     result: Union[WordGenerator.Result, TurkishSentenceNormalizer.Candidates]
                     result = self.analysis_converter.convert(current, analysis)
-                    if result:
-                        candidates.add(result.surface)
+                    if result is not None and result.surface not in candidates_set:
+                        candidates.append(result.surface)
+                        candidates_set.add(result.surface)
                 else:
                     results: Tuple[WordGenerator.Result] = self.morphology.word_generator.generate(
                         item=analysis.item, morphemes=analysis.get_morphemes()
                     )
                     for result in results:
-                        candidates.add(result.surface)
+                        if result.surface not in candidates_set:
+                            candidates_set.add(result.surface)
+                            candidates.append(result.surface)
 
             if len(analyses.analysis_results) == 0 and len(current) > 3:
                 spell_candidates = self.spell_checker.suggest_for_word_for_normalization(
@@ -151,10 +182,13 @@ class TurkishSentenceNormalizer:
                 if len(spell_candidates) > 3:
                     spell_candidates = spell_candidates[:3]
 
-                candidates.update(spell_candidates)
+                candidates.extend([c for c in spell_candidates if c not in candidates_set])
+                candidates_set.update(spell_candidates)
 
             if len(candidates) == 0 or self.morphology.analyze(current).is_correct():
-                candidates.add(current)
+                if current not in candidates_set:
+                    candidates_set.add(current)
+                    candidates.append(current)
 
             result = TurkishSentenceNormalizer.Candidates(current_token.content,
                                                           tuple(TurkishSentenceNormalizer.Candidate(s) for
@@ -174,7 +208,7 @@ class TurkishSentenceNormalizer:
         lm_order = self.lm.order
         initial.history = [TurkishSentenceNormalizer.START] * (lm_order - 1)
         initial.current = TurkishSentenceNormalizer.START
-        initial.score = 0.
+        initial.score = np.float32(0.)
         current.append(initial)
 
         for candidates in candidates_list:
@@ -196,8 +230,13 @@ class TurkishSentenceNormalizer:
                     indexes[-1] = self.lm.vocabulary.index_of(c.content)
                     score = self.lm.get_probability(tuple(indexes))
 
-                    new_hyp.score = h.score + score
-                    next_.append(new_hyp)
+                    new_hyp.score = np.float32(h.score + score)
+
+                    try:
+                        idx = next_.index(new_hyp)
+                        next_[idx] = new_hyp if new_hyp.score > next_[idx].score else next_[idx]
+                    except ValueError:
+                        next_.append(new_hyp)
 
             current = next_
             next_ = []
@@ -351,7 +390,7 @@ class TurkishSentenceNormalizer:
             self.history: Union[List['TurkishSentenceNormalizer.Candidate'], None] = None
             self.current: Union['TurkishSentenceNormalizer.Candidate', None] = None
             self.previous: Union['TurkishSentenceNormalizer.Hypothesis', None] = None
-            self.score: Union[float, None] = None
+            self.score: Union[np.float32, None] = None
 
         def __eq__(self, other):
             if self is other:
@@ -374,7 +413,7 @@ class TurkishSentenceNormalizer:
     class Candidate:
         def __init__(self, content: str):
             self.content = content
-            self.score = 1.0
+            self.score = np.float32(1.0)
 
         def __eq__(self, other):
             if self is other:

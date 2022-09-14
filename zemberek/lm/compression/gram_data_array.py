@@ -4,7 +4,7 @@ from struct import unpack
 
 
 class GramDataArray:
-    MAX_BUF = 0x3fffffff
+    MAX_BUF: np.int32 = np.int32(0x3fffffff)
 
     def __init__(self, file):
         self.count, self.fp_size, self.prob_size, self.backoff_size = unpack('>4i', file.read(4 * 4))

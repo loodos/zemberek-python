@@ -1,4 +1,5 @@
 import csv
+import os
 import re
 
 from pkg_resources import resource_filename
@@ -41,7 +42,7 @@ class PerceptronSegmenter:
         :return: a dictionary which holds hash values as keys and values as weights
         """
         if not path:
-            path = resource_filename("zemberek", "resources/sentence_boundary_model_weights.csv")
+            path = resource_filename("zemberek", os.path.join("resources", "sentence_boundary_model_weights.csv"))
         weights = dict()
         csv.field_size_limit(100000000)
 
@@ -68,7 +69,7 @@ class PerceptronSegmenter:
         }
 
         if not path:
-            path = resource_filename("zemberek", "resources/abbreviations.txt")
+            path = resource_filename("zemberek", os.path.join("resources", "abbreviations.txt"))
 
         abbr_set = set()
         with open(path, 'r', encoding="utf-8") as f:

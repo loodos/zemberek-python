@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 
 from pkg_resources import resource_filename
@@ -27,11 +28,11 @@ class PronunciationGuesser:
     alphabet = TurkishAlphabet.INSTANCE
 
     turkish_letter_prons: Dict[str, str] = load_map(
-        resource_filename("zemberek", "resources/phonetics/turkish-letter-names.txt"))
+        resource_filename("zemberek", os.path.join("resources", "phonetics", "turkish-letter-names.txt")))
     english_letter_prons: Dict[str, str] = load_map(
-        resource_filename("zemberek", "resources/phonetics/english-letter-names.txt"))
+        resource_filename("zemberek", os.path.join("resources", "phonetics", "english-letter-names.txt")))
     english_phones_to_turkish: Dict[str, str] = load_map(
-        resource_filename("zemberek", "resources/phonetics/english-phones-to-turkish.txt"))
+        resource_filename("zemberek", os.path.join("resources", "phonetics", "english-phones-to-turkish.txt")))
     extractor_for_abbrv: TurkishSyllableExtractor = TurkishSyllableExtractor.STRICT
 
     def to_turkish_letter_pronunciations(self, w: str) -> str:

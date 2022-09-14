@@ -2,23 +2,28 @@ from __future__ import annotations
 
 import time
 import logging
+import os
 
-from typing import Tuple, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING, List, Optional
 from functools import lru_cache
+from pkg_resources import resource_filename
 
 if TYPE_CHECKING:
     from zemberek.tokenization.token import Token
     from zemberek.morphology.analysis.single_analysis import SingleAnalysis
+    from zemberek.morphology.ambiguity.ambiguity_resolver import AmbiguityResolver
 
 from zemberek.tokenization import TurkishTokenizer
 from zemberek.core.turkish import TurkishAlphabet, StemAndEnding, PrimaryPos
 from zemberek.core.text import TextUtil
 from zemberek.morphology.analysis.word_analysis import WordAnalysis
+from zemberek.morphology.analysis.sentence_analysis import SentenceAnalysis
 from zemberek.morphology.analysis.rule_based_analyzer import RuleBasedAnalyzer
 from zemberek.morphology.analysis.unidentified_token_analyzer import UnidentifiedTokenAnalyzer
 from zemberek.morphology.generator import WordGenerator
 from zemberek.morphology.lexicon import RootLexicon
 from zemberek.morphology.morphotactics import TurkishMorphotactics, InformalTurkishMorphotactics
+from zemberek.morphology.ambiguity.perceptron_ambiguity_resolver import PerceptronAmbiguityResolver
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +41,16 @@ class TurkishMorphology:
         self.word_generator = WordGenerator(self.morphotactics)
 
         self.use_unidentified_token_analyzer = builder.use_unidentifiedTokenAnalyzer
+
+        if builder.ambiguity_resolver is None:
+            resource_path = resource_filename("zemberek", os.path.join("resources", "ambiguity", "model-compressed"))
+            try:
+                self.ambiguity_resolver = PerceptronAmbiguityResolver.from_resource(resource_path)
+            except IOError as e:
+                logger.error(e)
+                raise RuntimeError(f"Cannot initialize PerceptronAmbiguityResolver from resource {resource_path}")
+        else:
+            self.ambiguity_resolver = builder.ambiguity_resolver
 
     @staticmethod
     def builder(lexicon: RootLexicon) -> 'TurkishMorphology.Builder':
@@ -61,6 +76,21 @@ class TurkishMorphology:
             no_dot = s
 
         return TextUtil.normalize_apostrophes(no_dot)
+
+    def analyze_sentence(self, sentence: str) -> List[WordAnalysis]:
+
+        normalized = TextUtil.normalize_quotes_hyphens(sentence)
+        result = [
+            self.analyze_without_cache(token=t) for t in self.tokenizer.tokenize(normalized)
+        ]
+
+        return result
+
+    def disambiguate(self, sentence: str, sentence_analysis: List[WordAnalysis]) -> SentenceAnalysis:
+        return self.ambiguity_resolver.disambiguate(sentence, sentence_analysis)
+
+    def analyze_and_disambiguate(self, sentence: str) -> SentenceAnalysis:
+        return self.disambiguate(sentence, self.analyze_sentence(sentence))
 
     def analyze_without_cache(self, word: str = None, token: Token = None) -> WordAnalysis:
         if word:
@@ -108,6 +138,7 @@ class TurkishMorphology:
             self.lexicon = lexicon
             self.informal_analysis = False
             self.ignore_diacritics_in_analysis = False
+            self.ambiguity_resolver: Optional['AmbiguityResolver'] = None
 
         def set_lexicon(self, lexicon: RootLexicon) -> 'TurkishMorphology.Builder':
             self.lexicon = lexicon

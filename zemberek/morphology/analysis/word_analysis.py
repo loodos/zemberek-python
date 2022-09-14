@@ -24,7 +24,6 @@ class WordAnalysis:
         self.inp = inp
         self.analysis_results = analysis_results
         self.normalized_input = self.inp if normalized_input is None else normalized_input
-        self.index = 0
 
     def is_correct(self) -> bool:
         return len(self.analysis_results) > 0 and not self.analysis_results[0].is_unknown()

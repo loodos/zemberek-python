@@ -5,11 +5,11 @@ import numpy as np
 from typing import List, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from zemberek.morphology.lexicon import DictionaryItem
     from zemberek.morphology.analysis.search_path import SearchPath
 
 
 from zemberek.core.turkish import RootAttribute, SecondaryPos
+from zemberek.morphology.lexicon import DictionaryItem
 from zemberek.morphology.morphotactics import TurkishMorphotactics
 from zemberek.morphology.morphotactics.morpheme import Morpheme
 
@@ -102,6 +102,15 @@ class SingleAnalysis:
                 return True
         return False
 
+    def get_group(self, group_index: int) -> 'SingleAnalysis.MorphemeGroup':
+        if group_index < 0 or group_index > self.group_boundaries.shape[0]:
+            raise ValueError(f"There are only {self.group_boundaries.shape[0]} morpheme groups. "
+                             f"But input is {group_index}")
+
+        end_index = len(self.morpheme_data_list) if group_index == self.group_boundaries.shape[0] - 1 else \
+            self.group_boundaries[group_index + 1]
+        return SingleAnalysis.MorphemeGroup(self.morpheme_data_list[self.group_boundaries[group_index]: end_index])
+
     def contains_morpheme(self, morpheme: Morpheme) -> bool:
         for morpheme_data in self.morpheme_data_list:
             if morpheme_data.morpheme == morpheme:
@@ -112,6 +121,13 @@ class SingleAnalysis:
         data: List['SingleAnalysis.MorphemeData'] = self.morpheme_data_list.copy()
         data[0] = SingleAnalysis.MorphemeData(data[0].morpheme, stem)
         return SingleAnalysis(item, data, self.group_boundaries.copy())
+
+    @classmethod
+    def unknown(cls, input_: str) -> 'SingleAnalysis':
+        item = DictionaryItem.UNKNOWN
+        s = cls.MorphemeData(Morpheme.UNKNOWN, input_)
+        boundaries = np.asarray([0], dtype=np.int32)
+        return cls(item, [s], boundaries)
 
     @staticmethod
     def dummy(inp: str, item: DictionaryItem) -> 'SingleAnalysis':
@@ -163,6 +179,15 @@ class SingleAnalysis:
             self.morpheme = morpheme
             self.surface = surface
 
+        def __str__(self):
+            return self.to_morpheme_string()
+
+        def to_morpheme_string(self) -> str:
+            return f"{self.surface_string()}{self.morpheme.id_}"
+
+        def surface_string(self) -> str:
+            return "" if len(self.surface) == 0 else f"{self.surface}:"
+
         def __eq__(self, other):
             if self is other:
                 return True
@@ -175,3 +200,11 @@ class SingleAnalysis:
             result = hash(self.morpheme)
             result = 31 * result + hash(self.surface)
             return result
+
+    class MorphemeGroup:
+        def __init__(self, morphemes: List['SingleAnalysis.MorphemeData']):
+            self.morphemes = morphemes
+
+        def lexical_form(self) -> str:
+            sb = [m.morpheme.id_ for m in self.morphemes]
+            return ''.join(sb)

@@ -35,7 +35,7 @@ class LargeNgramMphf(Mphf):
 
         return LargeNgramMphf(max_bit_mask, bucket_mask, page_shift, tuple(hashes), offsets)
 
-    def get_(self, ngram: Tuple[int, ...], hash_: int) -> int:
+    def get_(self, ngram: Tuple[int, ...], hash_: int = None) -> int:
         page_index = self.rshift(hash_ & self.max_bit_mask, self.page_shift)
         return self.mphfs[page_index].get_(ngram, hash_) + self.offsets[page_index]
 
