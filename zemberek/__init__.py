@@ -5,7 +5,7 @@ from .tokenization import TurkishSentenceExtractor, TurkishTokenizer
 import logging
 import sys
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
