@@ -13,7 +13,7 @@ from zemberek.core.hash.multi_level_mphf import MultiLevelMphf
 
 class LossyIntLookup:
 
-    MAGIC: np.int32 = np.int32(0xcafebeef)
+    MAGIC: np.int32 = np.int32(-889274641)
 
     def __init__(self, mphf: Mphf, data: np.ndarray):
         self.mphf = mphf
