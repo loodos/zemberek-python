@@ -14,8 +14,8 @@ class MultiLevelMphf(Mphf):
     """
 
     HASH_MULTIPLIER: np.int32 = np.int32(16777619)
-    INITIAL_HASH_SEED: np.int32 = np.int32(0x811C9DC5)
-    BIT_MASK_21: np.int32 = np.int32((1 << 21) - 1)
+    INITIAL_HASH_SEED: np.int32 = np.int32(-2128831035)
+    BIT_MASK_21: np.int32 = np.int32(2097151)  # np.int32((1 << 21) - 1)
 
     def __init__(self, hash_level_data: Tuple['MultiLevelMphf.HashIndexes']):
         self.hash_level_data = hash_level_data
