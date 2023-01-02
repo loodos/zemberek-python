@@ -63,9 +63,9 @@ class TurkishMorphology:
         logger.info(f"TurkishMorphology instance initialized in {time.time() - start_time}")
         return instance
 
-    @lru_cache(maxsize=200)
-    def analyze(self, word: str) -> WordAnalysis:
-        return self.analyze_without_cache(word=word)
+    @lru_cache(maxsize=250)
+    def analyze(self, word: str = None, token: Token = None) -> WordAnalysis:
+        return self.analyze_without_cache(word=word, token=token)
 
     @staticmethod
     def normalize_for_analysis(word: str) -> str:
@@ -81,7 +81,7 @@ class TurkishMorphology:
 
         normalized = TextUtil.normalize_quotes_hyphens(sentence)
         result = [
-            self.analyze_without_cache(token=t) for t in self.tokenizer.tokenize(normalized)
+            self.analyze(token=t) for t in self.tokenizer.tokenize(normalized)
         ]
 
         return result

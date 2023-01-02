@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING, DefaultDict, Any, Optional
+from typing import List, TYPE_CHECKING, DefaultDict, Any, Optional, Tuple, Dict
 
 from operator import attrgetter
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import numpy as np
 
 if TYPE_CHECKING:
@@ -65,13 +65,18 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
 
     class FeatureExtractor:
 
+        feature_cache: Dict[Tuple[SingleAnalysis, ...], DefaultDict[Any, np.int32]] = dict()
+
         def __init__(self, use_cache: bool):
             self.use_cache = use_cache
 
         def extract_from_trigram(self, trigram: List[SingleAnalysis]) -> DefaultDict[Any, np.int32]:
 
             if self.use_cache:
-                raise ValueError(f"feature cache for FeatureExtractor has not been implemented yet!")
+                # raise ValueError(f"feature cache for FeatureExtractor has not been implemented yet!")
+                cached = self.feature_cache.get(tuple(trigram))
+                if cached is not None:
+                    return cached
 
             feats = defaultdict(np.int32)
 
@@ -89,7 +94,7 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
             r2: str = w2.lemma
             r3: str = w3.lemma
 
-            ig1: str = '+'.join(w1.igs)
+            # ig1: str = '+'.join(w1.igs)
             ig2: str = '+'.join(w2.igs)
             ig3: str = '+'.join(w3.igs)
 
@@ -118,8 +123,12 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
 
             feats[f"22:{trigram[2].group_boundaries.shape[0]}"] += 1
 
-            for k in feats.keys():
-                feats[k] = np.int32(feats[k])
+            # do this outside
+            # for k in feats.keys():
+            #     feats[k] = np.int32(feats[k])
+
+            if self.use_cache:
+                self.feature_cache[tuple(trigram)] = feats
 
             return feats
 
@@ -138,12 +147,23 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
                     PerceptronAmbiguityResolver.sentence_begin,
                     PerceptronAmbiguityResolver.sentence_begin,
                     previous=None,
-                    score=0
+                    score=np.float32(0)
                 )
             ]
+            # current_list: OrderedDict['PerceptronAmbiguityResolver.Hypothesis', np.float32] = OrderedDict(
+            #     [
+            #         (PerceptronAmbiguityResolver.Hypothesis(
+            #             PerceptronAmbiguityResolver.sentence_begin,
+            #             PerceptronAmbiguityResolver.sentence_begin,
+            #             previous=None,
+            #             score=np.float32(0)
+            #         ), np.float32(0))
+            #     ]
+            # )
 
             for analysis_data in sentence:
                 next_list: List['PerceptronAmbiguityResolver.Hypothesis'] = []
+                # next_list: OrderedDict['PerceptronAmbiguityResolver.Hypothesis', np.float32] = OrderedDict()
 
                 analyses: List[SingleAnalysis] = list(analysis_data.analysis_results)
 
@@ -157,15 +177,26 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
 
                         trigram_score = np.float32(0)
                         for key in features.keys():
-                            trigram_score += self.model.get_(key) * features.get(key)
+                            trigram_score += np.float32(self.model.get_(key) * np.float32(features.get(key)))
 
                         new_hyp = PerceptronAmbiguityResolver.Hypothesis(
                             h.current,
                             analysis,
                             h,
-                            score=h.score + trigram_score
+                            score=np.float32(h.score + trigram_score)
                         )
-                        next_list.append(new_hyp)
+
+                        i, found = next(((i, c) for i, c in enumerate(next_list) if new_hyp == c), (None, None))
+
+                        if found is not None and new_hyp.score > found.score:
+                            next_list[i] = new_hyp
+                        elif found is None:
+                            next_list.append(new_hyp)
+                        # if new_hyp in next_list:
+                        #     new_hyp.score = max(next_list[new_hyp], new_hyp.score)
+
+                        # next_list[new_hyp] = new_hyp.score
+                        # next_list.append(new_hyp)
 
                 current_list = next_list
 
@@ -175,7 +206,7 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
 
                 trigram_score = np.float32(0)
                 for key in features.keys():
-                    trigram_score += self.model.get_(key) * features.get(key)
+                    trigram_score += np.float32(self.model.get_(key) * np.float32(features.get(key)))
 
                 h.score += trigram_score
 
@@ -189,10 +220,8 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
 
             return PerceptronAmbiguityResolver.DecodeResult(list(reversed(result)), best_score)
 
-
-
     class DecodeResult:
-        def __init__(self, best_parse: List[SingleAnalysis], score: float):
+        def __init__(self, best_parse: List[SingleAnalysis], score: np.float32):
             self.best_parse = best_parse
             self.score = score
 
@@ -202,7 +231,7 @@ class PerceptronAmbiguityResolver(AmbiguityResolver):
                 prev: SingleAnalysis,
                 current: SingleAnalysis,
                 previous: Optional['PerceptronAmbiguityResolver.Hypothesis'],
-                score: float
+                score: np.float32
         ):
             self.prev = prev
             self.current = current
