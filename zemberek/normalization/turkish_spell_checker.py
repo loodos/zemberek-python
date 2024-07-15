@@ -41,7 +41,10 @@ class TurkishSpellChecker:
         if not lm:
             lm = self.unigram_model
         unranked: Tuple[str] = self.get_unranked_suggestions(word)
-        return self.rank_with_unigram_probability(unranked, lm)
+        result = self.rank_with_unigram_probability(unranked, lm)
+        if bool(result):
+            return result
+        return (word,)
 
     def suggest_for_word_for_normalization(self, word: str, left_context: str, right_context: str, lm: SmoothLM) -> \
             Tuple[str]:
