@@ -2,7 +2,7 @@ import logging
 import os
 import re
 
-from pkg_resources import resource_filename
+from importlib.resources import files
 from typing import Dict, List
 
 from zemberek.core.turkish import TurkishSyllableExtractor, TurkishAlphabet
@@ -28,11 +28,11 @@ class PronunciationGuesser:
     alphabet = TurkishAlphabet.INSTANCE
 
     turkish_letter_prons: Dict[str, str] = load_map(
-        resource_filename("zemberek", os.path.join("resources", "phonetics", "turkish-letter-names.txt")))
+        str(files("zemberek").joinpath("resources", "phonetics", "turkish-letter-names.txt")))
     english_letter_prons: Dict[str, str] = load_map(
-        resource_filename("zemberek", os.path.join("resources", "phonetics", "english-letter-names.txt")))
+        str(files("zemberek").joinpath("resources", "phonetics", "english-letter-names.txt")))
     english_phones_to_turkish: Dict[str, str] = load_map(
-        resource_filename("zemberek", os.path.join("resources", "phonetics", "english-phones-to-turkish.txt")))
+        str(files("zemberek").joinpath("resources", "phonetics", "english-phones-to-turkish.txt")))
     extractor_for_abbrv: TurkishSyllableExtractor = TurkishSyllableExtractor.STRICT
 
     def to_turkish_letter_pronunciations(self, w: str) -> str:

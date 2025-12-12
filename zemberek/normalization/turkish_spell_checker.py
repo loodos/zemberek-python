@@ -4,7 +4,7 @@ import os
 import re
 import logging
 
-from pkg_resources import resource_filename
+from importlib.resources import files
 from operator import itemgetter
 from typing import List, Set, Tuple, TYPE_CHECKING
 
@@ -31,7 +31,7 @@ class TurkishSpellChecker:
             graph = StemEndingGraph(morphology)
             self.decoder = CharacterGraphDecoder(graph.stem_graph)
             self.unigram_model: SmoothLM = SmoothLM.builder(
-                resource=resource_filename("zemberek", os.path.join("resources", "lm-unigram.slm"))).build()
+                resource=str(files("zemberek").joinpath("resources", "lm-unigram.slm"))).build()
             self.char_matcher = matcher
         else:
             self.decoder = decoder

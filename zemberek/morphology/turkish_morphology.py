@@ -6,7 +6,7 @@ import os
 
 from typing import Tuple, TYPE_CHECKING, List, Optional
 from functools import lru_cache
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 if TYPE_CHECKING:
     from zemberek.tokenization.token import Token
@@ -43,7 +43,7 @@ class TurkishMorphology:
         self.use_unidentified_token_analyzer = builder.use_unidentifiedTokenAnalyzer
 
         if builder.ambiguity_resolver is None:
-            resource_path = resource_filename("zemberek", os.path.join("resources", "ambiguity", "model-compressed"))
+            resource_path = str(files("zemberek").joinpath("resources", "ambiguity", "model-compressed"))
             try:
                 self.ambiguity_resolver = PerceptronAmbiguityResolver.from_resource(resource_path)
             except IOError as e:
