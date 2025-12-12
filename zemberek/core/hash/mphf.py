@@ -19,4 +19,4 @@ class Mphf(ABC):
         :param int n: number of shifts
         :return: shifted value
         """
-        return (val % 0x100000000) >> n
+        return (int(val) % 0x100000000) >> n

@@ -1,14 +1,14 @@
 import pickle
 import os
 
-from pkg_resources import resource_filename
+from importlib.resources import files
 from typing import Dict
 
 
 class Deasciifier:
     turkish_context_size = 10
     with open(
-            resource_filename("zemberek", os.path.join("resources", "normalization", "turkish_pattern_table.pickle")),
+            str(files("zemberek").joinpath("resources", "normalization", "turkish_pattern_table.pickle")),
             "rb"
     ) as f:
         turkish_pattern_table: Dict[str, Dict] = pickle.load(f)

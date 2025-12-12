@@ -2,7 +2,7 @@ import csv
 import os
 import time
 
-from pkg_resources import resource_filename
+from importlib.resources import files
 from typing import List, Dict, Set, Tuple
 from logging import Logger
 
@@ -155,7 +155,7 @@ class RootLexicon:
     @staticmethod
     def get_default() -> 'RootLexicon':
         start = time.time()
-        lexicon_path = resource_filename("zemberek", os.path.join("resources", "lexicon.csv"))
+        lexicon_path = str(files("zemberek").joinpath("resources", "lexicon.csv"))
         lexicon = DictionaryReader.load_from_resources(lexicon_path)
         logger.debug(f"Dictionary generated in {time.time() - start} seconds")
         return lexicon

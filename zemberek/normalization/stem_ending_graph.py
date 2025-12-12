@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Tuple, FrozenSet, TYPE_CHECKING
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 import os
 
@@ -26,7 +26,7 @@ class StemEndingGraph:
     @staticmethod
     def load_lines_from_resource(path: str = None) -> Tuple[str]:
         if not path:
-            path = resource_filename("zemberek", os.path.join("resources", "normalization", "endings.txt"))
+            path = str(files("zemberek").joinpath("resources", "normalization", "endings.txt"))
         with open(path, 'r', encoding='utf-8') as f:
             lines = tuple(line.replace('\n', "") for line in f.readlines())
         return lines

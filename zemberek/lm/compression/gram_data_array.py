@@ -51,11 +51,11 @@ class GramDataArray:
 
         d = self.data[page_id]
         if self.prob_size == 1:
-            return d[page_index] & 255
+            return int(d[page_index]) & 255
         elif self.prob_size == 2:
-            return (d[page_index] & 255) << 8 | d[page_index + 1] & 255
+            return (int(d[page_index]) & 255) << 8 | int(d[page_index + 1]) & 255
         elif self.prob_size == 3:
-            return (d[page_index] & 255) << 16 | (d[page_index + 1] & 255) << 8 | d[page_index + 2] & 255
+            return (int(d[page_index]) & 255) << 16 | (int(d[page_index + 1]) & 255) << 8 | int(d[page_index + 2]) & 255
         else:
             return -1
 
@@ -65,11 +65,11 @@ class GramDataArray:
 
         d = self.data[page_id]
         if self.backoff_size == 1:
-            return d[page_index] & 255
+            return int(d[page_index]) & 255
         elif self.backoff_size == 2:
-            return (d[page_index] & 255) << 8 | d[page_index + 1] & 255
+            return (int(d[page_index]) & 255) << 8 | int(d[page_index + 1]) & 255
         elif self.backoff_size == 3:
-            return (d[page_index] & 255) << 16 | (d[page_index + 1] & 255) << 8 | d[page_index + 2] & 255
+            return (int(d[page_index]) & 255) << 16 | (int(d[page_index + 1]) & 255) << 8 | int(d[page_index + 2]) & 255
         else:
             return -1
 
@@ -79,19 +79,19 @@ class GramDataArray:
         d: bytes = self.data[self.rshift(global_index, self.page_shift)]
 
         if self.fp_size == 1:
-            return fp_to_check == (d[page_index] & 0xFF)
+            return fp_to_check == (int(d[page_index]) & 0xFF)
         elif self.fp_size == 2:
-            return (self.rshift(fp_to_check, 8) == d[page_index] & 0xFF) \
-                   and (fp_to_check & 0xFF == d[page_index + 1] & 0xFF)
+            return (self.rshift(fp_to_check, 8) == int(d[page_index]) & 0xFF) \
+                   and (fp_to_check & 0xFF == int(d[page_index + 1]) & 0xFF)
         elif self.fp_size == 3:
-            return (self.rshift(fp_to_check, 16) == (d[page_index] & 0xFF)) \
-                   and ((self.rshift(fp_to_check, 8) & 0xFF) == (d[page_index + 1] & 0xFF)) \
-                   and ((fp_to_check & 0xFF) == (d[page_index + 2] & 0xFF))
+            return (self.rshift(fp_to_check, 16) == (int(d[page_index]) & 0xFF)) \
+                   and ((self.rshift(fp_to_check, 8) & 0xFF) == (int(d[page_index + 1]) & 0xFF)) \
+                   and ((fp_to_check & 0xFF) == (int(d[page_index + 2]) & 0xFF))
         elif self.fp_size == 4:
-            return (self.rshift(fp_to_check, 24) == (d[page_index] & 0xFF)) \
-                   and ((self.rshift(fp_to_check, 16) & 0xFF) == (d[page_index + 1] & 0xFF)) \
-                   and ((self.rshift(fp_to_check, 8) & 0xFF) == (d[page_index + 2] & 0xFF)) \
-                   and ((fp_to_check & 0xFF) == (d[page_index + 3] & 0xFF))
+            return (self.rshift(fp_to_check, 24) == (int(d[page_index]) & 0xFF)) \
+                   and ((self.rshift(fp_to_check, 16) & 0xFF) == (int(d[page_index + 1]) & 0xFF)) \
+                   and ((self.rshift(fp_to_check, 8) & 0xFF) == (int(d[page_index + 2]) & 0xFF)) \
+                   and ((fp_to_check & 0xFF) == (int(d[page_index + 3]) & 0xFF))
         else:
             raise BaseException("fp_size must be between 1 and 4")
 
@@ -103,4 +103,4 @@ class GramDataArray:
         :param int n: number of shifts
         :return: shifted value
         """
-        return (val % 0x100000000) >> n
+        return (int(val) % 0x100000000) >> n
