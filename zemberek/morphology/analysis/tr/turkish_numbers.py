@@ -47,7 +47,7 @@ class TurkishNumbers:
         sb: List[str] = []
 
         i = 0
-        while i < len(inp) and inp[i] == 0:
+        while i < len(inp) and inp[i] == "0":
             sb.append("sıfır")
             i += 1
 
